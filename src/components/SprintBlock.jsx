@@ -59,7 +59,7 @@ const completeSprint = () => {
     return (
       <div className="sprint-empty">
         <p className="sprint-empty-text">Нет активного спринта</p>
-        <button className="btn-primary" onClick={() => setShowForm(true)}>
+        <button className="btn-primary" onClick={() => setShowForm(true)} title="📅 Создать спринт на 1-4 недели. Спринт даёт ритм и фокус команде.">
           + Создать спринт
         </button>
       </div>
@@ -107,7 +107,7 @@ const completeSprint = () => {
             {timeLeft.days}д {timeLeft.hours}ч {timeLeft.minutes}м
           </div>
         )}
-        <button className="btn-complete-sprint" onClick={completeSprint}>
+        <button className="btn-complete-sprint" onClick={completeSprint} title="✅ Завершить текущий спринт. Незавершённые задачи останутся на доске.">
           ✅ Завершить спринт
         </button>
         

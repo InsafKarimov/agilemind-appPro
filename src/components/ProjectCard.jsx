@@ -31,7 +31,7 @@ export default function ProjectCard({ project, onOpen, onDelete, onEdit }) {
       </div>
       <p className="project-stats">📋 {project.tasks?.length || 0} задач</p>
       <div className="project-actions">
-        <button className="btn-open" onClick={() => onOpen(project)}>Открыть</button>
+        <button className="btn-open" onClick={() => onOpen(project)} title={`📁 ${project.name}: ${project.tasks.length} задач, методология — ${project.methodology}. Нажми «Открыть» для работы.`}>Открыть</button>
         <button className="btn-delete" onClick={() => onDelete(project.id)}>🗑️</button>
       </div>
       {project.quizPassed && (

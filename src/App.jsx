@@ -7,6 +7,8 @@ import Profile from './components/Profile';
 import { loadCurrentUser, login, logout, loadUserProjects, saveUserProjects } from './utils/localStorage';
 import KanbanBoard from './components/KanbanBoard';
 
+import AiAssistant from './components/AiAssistant';
+
 function App() {
   const [user, setUser] = useState(null);
   const [projects, setProjects] = useState([]);
@@ -122,6 +124,8 @@ function App() {
         🎓 WIP-лимиты · Scrumban · Квизы · Обучение Agile · Достижения
       </p>
       </footer>
+      {/* AI-ассистент */}
+      <AiAssistant />
     </div>
   );
 }

@@ -118,8 +118,8 @@ WIP (Work In Progress) — ограничение на количество не
         <div className="board-header">
           <h1 className="board-title">{project.name}</h1>
           <div>
-            <button className="btn-add-task" onClick={() => { setEditingTask(null); setShowTaskModal(true); }}>➕ Задача</button>
-            <button className="btn-quiz" onClick={() => setShowQuiz(true)}>🏅 Квиз</button>
+            <button className="btn-add-task" onClick={() => { setEditingTask(null); setShowTaskModal(true); }} title="➕ Создать новую задачу. Название, описание, приоритет — всё настраивается.">➕ Задача</button>
+            <button className="btn-quiz" onClick={() => setShowQuiz(true)} title="🏅 Квиз — проверь знания по Agile (нужно 3 из 4 правильных ответов)">🏅 Квиз</button>
           </div>
         </div>
 
@@ -140,7 +140,7 @@ WIP (Work In Progress) — ограничение на количество не
           <div className="kanban-column">
             <div className="column-header column-header-blue">
               <div className="column-header-content">
-                <h3 className="column-title">📋 К выполнению</h3>
+                <h3 className="column-title" title="📋 Задачи, которые нужно сделать">📋 К выполнению</h3>
                 <span className="column-count">{filterTasks(todo).length}</span>
               </div>
             </div>
@@ -159,13 +159,16 @@ WIP (Work In Progress) — ограничение на количество не
           <div className={`kanban-column ${isWipOver ? 'wip-warning' : ''}`}>
             <div className="column-header column-header-yellow">
               <div className="column-header-content">
-                <h3 className="column-title">⚙️ В работе</h3>
+                <h3 className="column-title" title="⚙️ Задачи, над которыми команда работает прямо сейчас. WIP-лимит ограничивает их количество.">⚙️ В работе</h3>
                 {showWip ? (
-                  <div className="wip-control">
+                  <div className="wip-control" title="📚 WIP-лимит — максимальное количество задач в работе. Превышение ведёт к хаосу и замедлению. ✅ Правило: заверши одну — возьми следующую.">
                     <span className="wip-label">WIP:</span>
                     <input type="number" min="1" max="10" value={wipLimit} onChange={(e) => setWipLimit(parseInt(e.target.value) || 1)} className="wip-input" />
-                    <span className={`wip-count ${isWipOver ? 'wip-count-over' : ''}`}>({filterTasks(inprogress).length}/{wipLimit})</span>
+                    <span className={`wip-count ${isWipOver ? 'wip-count-over' : ''}`}> ({filterTasks(inprogress).length}/{wipLimit})</span>
                   </div>
+                  
+                    
+                  
                 ) : (
                   <span className="column-count">{filterTasks(inprogress).length}</span>
                 )}
@@ -186,7 +189,7 @@ WIP (Work In Progress) — ограничение на количество не
           <div className="kanban-column">
             <div className="column-header column-header-green">
               <div className="column-header-content">
-                <h3 className="column-title">✅ Готово</h3>
+                <h3 className="column-title" title="✅ Завершённые задачи. Их можно вернуть обратно при необходимости.">✅ Готово</h3>
                 <span className="column-count">{filterTasks(done).length}</span>
               </div>
             </div>

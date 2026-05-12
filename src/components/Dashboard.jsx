@@ -4,10 +4,15 @@ import CreateProjectModal from './CreateProjectModal';
 import KanbanBoard from './KanbanBoard';
 import LearningMaterials from './LearningMaterials';
 
+import TeamPage from './TeamPage';
+
 export default function Dashboard({ user, projects, onUpdateProjects, onOpenQuizzes, onOpenProfile, onOpenProject, onLogout  }) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [currentProject, setCurrentProject] = useState(null);
   const [showLearning, setShowLearning] = useState(false);
+
+  const [showTeam, setShowTeam] = useState(false);
+
   const editProject = (id, newName) => {
   const newProjects = projects.map(p => p.id === id ? { ...p, name: newName } : p);
     onUpdateProjects(newProjects);
@@ -41,6 +46,11 @@ export default function Dashboard({ user, projects, onUpdateProjects, onOpenQuiz
 
   const passedCount = projects.filter(p => p.quizPassed).length;
 
+  if (showTeam) {
+    return <TeamPage onBack={() => setShowTeam(false)} />;
+  }
+
+
   if (currentProject) {
     return (
       <KanbanBoard
@@ -61,9 +71,10 @@ export default function Dashboard({ user, projects, onUpdateProjects, onOpenQuiz
           </div>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
             {/* <div className="badge-counter">🏅 Agile-экспертов: {passedCount} / {projects.length}</div> */}
-            <button onClick={onOpenQuizzes} style={{ background: '#f59e0b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>🏅 Квизы</button>
-            <button onClick={() => setShowLearning(true)} style={{ background: '#10b981', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>📚 Обучение</button>
-            <button onClick={onOpenProfile} style={{ background: '#4f46e5', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>👤 Профиль</button>
+            <button onClick={() => setShowTeam(true)} className="btn-team" title="☀️ Загляни сюда, чтобы не забыть про стендап и ретроспективу">👥 Команда</button>
+            <button onClick={onOpenQuizzes} style={{ background: '#f59e0b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }} title="🧠 Проверить знания по Agile и гибридным методологиям. Получите достижение 'Абсолютный чемпион'">🏅 Квизы</button>
+            <button onClick={() => setShowLearning(true)} style={{ background: '#10b981', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }} title="📚 4 модуля по Agile, Scrum, Kanban и Scrumban. Пройди все — получи сертификат!">📚 Обучение</button>
+            <button onClick={onOpenProfile} style={{ background: '#4f46e5', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }} title="👤 Личный кабинет: достижения, статистика, сертификаты и прогресс обучения.">👤 Профиль</button>
             <button onClick={onLogout} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>🚪 Выйти</button>
           </div>
         </div>

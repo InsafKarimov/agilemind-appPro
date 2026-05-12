@@ -1942,6 +1942,558 @@ canvas {
 .app-footer a:hover {
   text-decoration: underline;
 }
+
+/* ===== КАСТОМНЫЕ СТИЛИ ДЛЯ КРАСОТЫ ===== */
+
+/* Карточки задач */
+.task-card {
+  transition: all 0.2s ease;
+  border-left-width: 4px;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопки */
+.btn-add-task, .btn-quiz, .btn-primary, .btn-secondary {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-add-task:hover, .btn-quiz:hover, .btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-add-task:active, .btn-quiz:active, .btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* Колонки Kanban */
+.kanban-column {
+  transition: box-shadow 0.2s ease;
+  background: white;
+}
+
+.kanban-column:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Заголовки колонок */
+.column-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* WIP-контрол */
+.wip-control {
+  background: #f3f4f6;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.wip-input {
+  width: 55px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Счётчик задач */
+.column-count {
+  font-weight: 600;
+  background: #e5e7eb;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* Карточки проектов */
+.project-card {
+  transition: all 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопка создания проекта */
+.add-project-btn {
+  transition: all 0.2s ease;
+}
+
+.add-project-btn:hover {
+  background: #e5e7eb;
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+/* Модальные окна */
+.modal-content {
+  animation: fadeInScale 0.2s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== КАСТОМНЫЕ СТИЛИ ДЛЯ КРАСОТЫ ===== */
+
+/* Карточки задач */
+.task-card {
+  transition: all 0.2s ease;
+  border-left-width: 4px;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопки */
+.btn-add-task, .btn-quiz, .btn-primary, .btn-secondary {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-add-task:hover, .btn-quiz:hover, .btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-add-task:active, .btn-quiz:active, .btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* Колонки Kanban */
+.kanban-column {
+  transition: box-shadow 0.2s ease;
+  background: white;
+}
+
+.kanban-column:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Заголовки колонок */
+.column-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* WIP-контрол */
+.wip-control {
+  background: #f3f4f6;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.wip-input {
+  width: 55px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Счётчик задач */
+.column-count {
+  font-weight: 600;
+  background: #e5e7eb;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* Карточки проектов */
+.project-card {
+  transition: all 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопка создания проекта */
+.add-project-btn {
+  transition: all 0.2s ease;
+}
+
+.add-project-btn:hover {
+  background: #e5e7eb;
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+/* Модальные окна */
+.modal-content {
+  animation: fadeInScale 0.2s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== КАСТОМНЫЕ СТИЛИ ДЛЯ КРАСОТЫ ===== */
+
+/* Карточки задач */
+.task-card {
+  transition: all 0.2s ease;
+  border-left-width: 4px;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопки */
+.btn-add-task, .btn-quiz, .btn-primary, .btn-secondary {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-add-task:hover, .btn-quiz:hover, .btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-add-task:active, .btn-quiz:active, .btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* Колонки Kanban */
+.kanban-column {
+  transition: box-shadow 0.2s ease;
+  background: white;
+}
+
+.kanban-column:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Заголовки колонок */
+.column-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* WIP-контрол */
+.wip-control {
+  background: #f3f4f6;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.wip-input {
+  width: 55px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Счётчик задач */
+.column-count {
+  font-weight: 600;
+  background: #e5e7eb;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* Карточки проектов */
+.project-card {
+  transition: all 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопка создания проекта */
+.add-project-btn {
+  transition: all 0.2s ease;
+}
+
+.add-project-btn:hover {
+  background: #e5e7eb;
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+/* Модальные окна */
+.modal-content {
+  animation: fadeInScale 0.2s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== КАСТОМНЫЕ СТИЛИ ДЛЯ КРАСОТЫ ===== */
+
+/* Карточки задач */
+.task-card {
+  transition: all 0.2s ease;
+  border-left-width: 4px;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопки */
+.btn-add-task, .btn-quiz, .btn-primary, .btn-secondary {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-add-task:hover, .btn-quiz:hover, .btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-add-task:active, .btn-quiz:active, .btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* Колонки Kanban */
+.kanban-column {
+  transition: box-shadow 0.2s ease;
+  background: white;
+}
+
+.kanban-column:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Заголовки колонок */
+.column-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* WIP-контрол */
+.wip-control {
+  background: #f3f4f6;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.wip-input {
+  width: 55px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Счётчик задач */
+.column-count {
+  font-weight: 600;
+  background: #e5e7eb;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* Карточки проектов */
+.project-card {
+  transition: all 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопка создания проекта */
+.add-project-btn {
+  transition: all 0.2s ease;
+}
+
+.add-project-btn:hover {
+  background: #e5e7eb;
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+/* Модальные окна */
+.modal-content {
+  animation: fadeInScale 0.2s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Плавное увеличение кнопок при наведении */
+.btn-add-task, .btn-quiz, .btn-primary, .btn-secondary {
+  transition: transform 0.1s ease, background 0.2s ease;
+}
+
+.btn-add-task:hover, .btn-quiz:hover, .btn-primary:hover {
+  transform: scale(1.02);
+}
+
+.btn-add-task:active, .btn-quiz:active, .btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* Карточки задач при наведении */
+.task-card {
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Колонки при наведении */
+.kanban-column {
+  transition: box-shadow 0.2s ease;
+}
+
+.kanban-column:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Карточки проектов */
+.project-card {
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Страница команды */
+.team-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.team-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.team-subtitle {
+  color: #6b7280;
+  margin-bottom: 32px;
+}
+
+.team-card {
+  display: flex;
+  gap: 20px;
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.team-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.team-card-icon {
+  font-size: 48px;
+}
+
+.team-card-content {
+  flex: 1;
+}
+
+.team-card-content h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.team-card-content p {
+  color: #4b5563;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.team-card-content ul {
+  margin-left: 20px;
+  margin-bottom: 16px;
+}
+
+.team-card-content li {
+  margin-bottom: 8px;
+  color: #4b5563;
+}
+
+.goal-placeholder {
+  background: #f3f4f6;
+  padding: 12px;
+  border-radius: 12px;
+  margin: 12px 0;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.standup-card { border-left: 4px solid #f59e0b; }
+.retro-card { border-left: 4px solid #8b5cf6; }
+.goal-card { border-left: 4px solid #10b981; }
+.reminder-card { border-left: 4px solid #3b82f6; }
+
+/* КОМАНДА */
+.btn-team {
+  background: #8b5cf6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
 /* ========== АДАПТАЦИЯ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ ========== */
 
 /* Планшеты и маленькие ноутбуки */
@@ -2097,4 +2649,13 @@ canvas {
   .sprint-form select {
     font-size: 14px;
   }
+  @media (max-width: 768px) {
+  .ai-fab {
+    width: 48px !important;
+    height: 48px !important;
+    bottom: 16px !important;
+    right: 16px !important;
+  }
+
+}
 }
