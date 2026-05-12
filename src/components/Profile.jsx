@@ -66,7 +66,7 @@ const achievements = [
           <div className="profile-user-info">
             <div className="profile-avatar">👤</div>
             <h3 className="profile-user-name">{user.name}</h3>
-            <p className="profile-user-date">С {new Date().toLocaleDateString()}</p>
+            
           </div>
           
           <div className="profile-stats-grid">

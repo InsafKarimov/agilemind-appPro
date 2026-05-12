@@ -6,6 +6,8 @@ export default function SprintBlock({ project, onCompleteSprint }) {
   const [name, setName] = useState('');
   const [weeks, setWeeks] = useState(2);
   const [timeLeft, setTimeLeft] = useState(null);
+  const [showRetro, setShowRetro] = useState(false);
+  const [retroFeedback, setRetroFeedback] = useState({ good: '', bad: '', improve: '' });
 
   useEffect(() => {
     if (sprint?.endDate) {
@@ -42,13 +44,14 @@ export default function SprintBlock({ project, onCompleteSprint }) {
     setName('');
     if (onCompleteSprint) onCompleteSprint({ ...project, activeSprint: newSprint });
   };
-
-  const completeSprint = () => {
-    if (window.confirm('Завершить спринт?')) {
-      setSprint(null);
-      if (onCompleteSprint) onCompleteSprint({ ...project, activeSprint: null });
+const completeSprint = () => {
+  if (window.confirm('Завершить спринт?')) {
+    setSprint(null);
+    if (onCompleteSprint) {
+      onCompleteSprint({ ...project, activeSprint: null });
     }
-  };
+  }
+};
 
   if (project.methodology === 'Kanban') return null;
 
@@ -107,7 +110,10 @@ export default function SprintBlock({ project, onCompleteSprint }) {
         <button className="btn-complete-sprint" onClick={completeSprint}>
           ✅ Завершить спринт
         </button>
+        
       </div>
+      
     </div>
+
   );
 }

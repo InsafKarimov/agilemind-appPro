@@ -14,8 +14,8 @@ function App() {
     return localStorage.getItem('currentScreen') || 'dashboard';
   });
   const [currentProjectId, setCurrentProjectId] = useState(() => {
-  const saved = localStorage.getItem('currentProjectId');
-  return saved ? parseInt(saved) : null;
+    const saved = localStorage.getItem('currentProjectId');
+    return saved ? parseInt(saved) : null;
   });
 
   useEffect(() => {
@@ -27,16 +27,16 @@ function App() {
     }
   }, []);
 
-useEffect(() => {
-  if (user && currentScreen !== 'login') {
-    localStorage.setItem('currentScreen', currentScreen);
-    if (currentProjectId) {
-      localStorage.setItem('currentProjectId', currentProjectId);
-    } else {
-      localStorage.removeItem('currentProjectId');
+  useEffect(() => {
+    if (user && currentScreen !== 'login') {
+      localStorage.setItem('currentScreen', currentScreen);
+      if (currentProjectId) {
+        localStorage.setItem('currentProjectId', currentProjectId);
+      } else {
+        localStorage.removeItem('currentProjectId');
+      }
     }
-  }
-}, [currentScreen, currentProjectId, user]);
+  }, [currentScreen, currentProjectId, user]);
 
   const handleLogin = (name) => {
     const newUser = { name };
@@ -62,56 +62,68 @@ useEffect(() => {
   };
 
   if (!user) {
-  return <LoginScreen onLogin={handleLogin} />;
-}
+    return <LoginScreen onLogin={handleLogin} />;
+  }
 
-// Сохраняем открытый проект
-const openProject = projects.find(p => p.id === currentProjectId);
+  const openProject = projects.find(p => p.id === currentProjectId);
 
-if (currentScreen === 'project' && openProject) {
+  if (currentScreen === 'project' && openProject) {
+    return (
+      <KanbanBoard
+        project={openProject}
+        onBack={() => {
+          setCurrentScreen('dashboard');
+          setCurrentProjectId(null);
+        }}
+        onUpdate={(updated) => {
+          const newProjects = projects.map(p => p.id === updated.id ? updated : p);
+          updateProjects(newProjects);
+        }}
+      />
+    );
+  }
+
+  if (currentScreen === 'quizzes') {
+    return <QuizzesPage onBack={() => setCurrentScreen('dashboard')} />;
+  }
+
+  if (currentScreen === 'profile') {
+    return (
+      <Profile
+        user={user}
+        projects={projects}
+        onClose={() => setCurrentScreen('dashboard')}
+      />
+    );
+  }
+
   return (
-    <KanbanBoard
-      project={openProject}
-      onBack={() => {
-        setCurrentScreen('dashboard');
-        setCurrentProjectId(null);
-      }}
-      onUpdate={(updated) => {
-        const newProjects = projects.map(p => p.id === updated.id ? updated : p);
-        updateProjects(newProjects);
-      }}
-    />
+    <div className="app-wrapper">
+      <div className="main-content">
+        <Dashboard
+          user={user}
+          projects={projects}
+          onUpdateProjects={updateProjects}
+          onOpenQuizzes={() => setCurrentScreen('quizzes')}
+          onOpenProfile={() => setCurrentScreen('profile')}
+          onOpenProject={(project) => {
+            setCurrentProjectId(project.id);
+            setCurrentScreen('project');
+          }}
+          onLogout={handleLogout}
+        />
+      </div>
+      <footer className="app-footer">
+        <p>
+        AgileMind — дипломный проект по управлению проектами с интерактивным обучением<br />
+        © {new Date().getFullYear()} Каримов Инсаф, КНИТУ-КАИ
+      </p>
+      <p style={{ marginTop: '8px' }}>
+        🎓 WIP-лимиты · Scrumban · Квизы · Обучение Agile · Достижения
+      </p>
+      </footer>
+    </div>
   );
-}
-
-if (currentScreen === 'quizzes') {
-  return <QuizzesPage onBack={() => setCurrentScreen('dashboard')} />;
-}
-
-if (currentScreen === 'profile') {
-  return (
-    <Profile
-      user={user}
-      projects={projects}
-      onClose={() => setCurrentScreen('dashboard')}
-    />
-  );
-}
-
-return (
-  <Dashboard
-    user={user}
-    projects={projects}
-    onUpdateProjects={updateProjects}
-    onOpenQuizzes={() => setCurrentScreen('quizzes')}
-    onOpenProfile={() => setCurrentScreen('profile')}
-    onOpenProject={(project) => {
-      setCurrentProjectId(project.id);
-      setCurrentScreen('project');
-    }}
-    onLogout={handleLogout}
-  />
-);
 }
 
 export default App;
