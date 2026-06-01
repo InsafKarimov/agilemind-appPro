@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5002/api';
+const API_URL = 'https://agilemind-sandbox-backend.onrender.com/api';
 
 // Включаем отправку cookie
 const fetchWithCredentials = (url, options = {}) => {
