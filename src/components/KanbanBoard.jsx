@@ -116,7 +116,9 @@ WIP (Work In Progress) — ограничение на количество не
         <button className="back-link" onClick={onBack}>← К проектам</button>
 
         <div className="board-header">
-          <h1 className="board-title">{project.name}</h1>
+          <h1 className="board-title" title={project.name}>
+            {project.name.length > 25 ? project.name.slice(0, 25) + '...' : project.name}
+          </h1>
           <div>
             <button className="btn-add-task" onClick={() => { setEditingTask(null); setShowTaskModal(true); }} title="➕ Создать новую задачу. Название, описание, приоритет — всё настраивается.">➕ Задача</button>
             <button className="btn-quiz" onClick={() => setShowQuiz(true)} title="🏅 Квиз — проверь знания по Agile (нужно 3 из 4 правильных ответов)">🏅 Квиз</button>

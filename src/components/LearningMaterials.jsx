@@ -1,75 +1,67 @@
 import React, { useState, useEffect } from 'react';
 import Confetti from 'react-confetti';
+import { getLearningProgress, saveLearningProgress, addAchievement } from '../utils/api';
 
 const modules = [
-  {
-    id: 1,
-    title: '📘 Что такое Agile?',
-    content: 'Agile — это подход к управлению проектами, основанный на итеративной разработке, гибкости и постоянной обратной связи. Манифест Agile был подписан в 2001 году 17 экспертами.',
-    completed: false
-  },
-  {
-    id: 2,
-    title: '🏃 Scrum: роли, события, артефакты',
-    content: 'Scrum — фреймворк с фиксированными спринтами (1-4 недели). Роли: Product Owner, Scrum Master, Команда. События: Sprint Planning, Daily Standup, Sprint Review, Retrospective.',
-    completed: false
-  },
-  {
-    id: 3,
-    title: '📋 Kanban: визуализация потока',
-    content: 'Kanban фокусируется на ограничении незавершённой работы (WIP-лимиты). Главное — тянуть задачи, а не толкать. Доска с колонками: To Do → In Progress → Done.',
-    completed: false
-  },
-  {
-    id: 4,
-    title: '🔄 Scrumban: гибридный подход',
-    content: 'Scrumban сочетает ритм спринтов Scrum с WIP-лимитами Kanban. Идеален для команд, которым нужна структура, но важна гибкость потока задач.',
-    completed: false
-  }
+  { id: 1, title: '📘 Что такое Agile?', content: 'Agile — это подход к управлению проектами, основанный на итеративной разработке, гибкости и постоянной обратной связи. Манифест Agile был подписан в 2001 году 17 экспертами.' },
+  { id: 2, title: '🏃 Scrum: роли, события, артефакты', content: 'Scrum — фреймворк с фиксированными спринтами (1-4 недели).' },
+  { id: 3, title: '📋 Kanban: визуализация потока', content: 'Kanban фокусируется на ограничении незавершённой работы (WIP-лимиты).' },
+  { id: 4, title: '🔄 Scrumban: гибридный подход', content: 'Scrumban сочетает ритм спринтов Scrum с WIP-лимитами Kanban.' }
 ];
 
 export default function LearningMaterials({ onClose, onCertificateEarned }) {
-  const [learningProgress, setLearningProgress] = useState(() => {
-    const saved = localStorage.getItem('learning_progress');
-    return saved ? JSON.parse(saved) : modules.map(m => ({ ...m, completed: false }));
-  });
+  const [learningProgress, setLearningProgress] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showCertificate, setShowCertificate] = useState(false);
-  const [confettiOpacity, setConfettiOpacity] = useState(1);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [confettiOpacity, setConfettiOpacity] = useState(1);
+  const [certificateGiven, setCertificateGiven] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('learning_progress', JSON.stringify(learningProgress));
-  }, [learningProgress]);
+    const load = async () => {
+      try {
+        const data = await getLearningProgress();
+        const progress = modules.map(m => ({
+          ...m,
+          completed: data.find(p => p.module_id === m.id)?.completed || false
+        }));
+        setLearningProgress(progress);
+        if (progress.every(m => m.completed)) setCertificateGiven(true);
+      } catch (err) {
+        setLearningProgress(modules.map(m => ({ ...m, completed: false })));
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
 
-  const markCompleted = (id) => {
+  const markCompleted = async (id) => {
     const newProgress = learningProgress.map(m =>
       m.id === id ? { ...m, completed: !m.completed } : m
     );
     setLearningProgress(newProgress);
+    await saveLearningProgress(newProgress.map(m => ({ module_id: m.id, completed: m.completed })));
     
     const allCompleted = newProgress.every(m => m.completed);
     if (allCompleted) {
-      setShowCertificate(true);
-      
-      // Конфетти с плавным затуханием
       setShowConfetti(true);
       setConfettiOpacity(1);
-      
-      // Через 4 секунды начинаем затухание
       setTimeout(() => {
         let opacity = 1;
         const fadeInterval = setInterval(() => {
-          opacity -= 0.05;
+          opacity -= 0.02;
           setConfettiOpacity(opacity);
           if (opacity <= 0) {
             clearInterval(fadeInterval);
             setShowConfetti(false);
           }
-        }, 50); // каждые 50мс уменьшаем на 0.05 → затухание 1 секунду
-      }, 4000);
-      
-      if (!localStorage.getItem('certificate_earned')) {
-        localStorage.setItem('certificate_earned', 'true');
+        }, 50);
+      }, 5000);
+      setShowCertificate(true);
+      if (!certificateGiven) {
+        setCertificateGiven(true);
+        await addAchievement('certificate_earned');
         if (onCertificateEarned) onCertificateEarned();
       }
     } else {
@@ -79,6 +71,8 @@ export default function LearningMaterials({ onClose, onCertificateEarned }) {
 
   const completedCount = learningProgress.filter(m => m.completed).length;
   const progressPercent = Math.floor((completedCount / modules.length) * 100);
+
+  if (loading) return <div className="modal-overlay" onClick={onClose}><div className="modal-content">Загрузка...</div></div>;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -129,7 +123,6 @@ export default function LearningMaterials({ onClose, onCertificateEarned }) {
               </button>
             </div>
             <p className="module-content">{module.content}</p>
-            
             <div className="video-funny-permanent">
               <div className="video-funny-permanent-icon">🎥💨</div>
               <div className="video-funny-permanent-text">
@@ -139,9 +132,7 @@ export default function LearningMaterials({ onClose, onCertificateEarned }) {
                 <p className="funny-hint">Рекомендуем поискать тему на VK Video или Rutube</p>
               </div>
             </div>
-            <div className="video-note">
-              📖 Изучи теорию выше и отметь модуль пройденным
-            </div>
+            <div className="video-note">📖 Изучи теорию выше и отметь модуль пройденным</div>
           </div>
         ))}
 

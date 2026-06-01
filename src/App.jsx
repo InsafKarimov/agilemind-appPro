@@ -4,64 +4,54 @@ import LoginScreen from './components/LoginScreen';
 import Dashboard from './components/Dashboard';
 import QuizzesPage from './components/QuizzesPage';
 import Profile from './components/Profile';
-import { loadCurrentUser, login, logout, loadUserProjects, saveUserProjects } from './utils/localStorage';
 import KanbanBoard from './components/KanbanBoard';
-
 import AiAssistant from './components/AiAssistant';
+import { getProjects, saveProjects, logout as apiLogout } from './utils/api';
 
 function App() {
   const [user, setUser] = useState(null);
   const [projects, setProjects] = useState([]);
-  const [currentScreen, setCurrentScreen] = useState(() => {
-    return localStorage.getItem('currentScreen') || 'dashboard';
-  });
-  const [currentProjectId, setCurrentProjectId] = useState(() => {
-    const saved = localStorage.getItem('currentProjectId');
-    return saved ? parseInt(saved) : null;
-  });
+  const [currentScreen, setCurrentScreen] = useState('dashboard');
+  const [currentProjectId, setCurrentProjectId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedUser = loadCurrentUser();
+    const savedUser = localStorage.getItem('user');
     if (savedUser) {
-      setUser(savedUser);
-      const savedProjects = loadUserProjects(savedUser.name);
-      setProjects(savedProjects);
+      setUser({ name: savedUser });
+      getProjects()
+        .then(setProjects)
+        .catch(() => {
+          localStorage.removeItem('user');
+          setUser(null);
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    if (user && currentScreen !== 'login') {
-      localStorage.setItem('currentScreen', currentScreen);
-      if (currentProjectId) {
-        localStorage.setItem('currentProjectId', currentProjectId);
-      } else {
-        localStorage.removeItem('currentProjectId');
-      }
-    }
-  }, [currentScreen, currentProjectId, user]);
-
-  const handleLogin = (name) => {
-    const newUser = { name };
-    setUser(newUser);
-    login(newUser);
-    const savedProjects = loadUserProjects(name);
-    setProjects(savedProjects);
+  const handleLogin = (username) => {
+    localStorage.setItem('user', username);
+    setUser({ name: username });
     setCurrentScreen('dashboard');
+    getProjects().then(setProjects).catch(() => {});
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await apiLogout();
+    localStorage.removeItem('user');
     setUser(null);
     setProjects([]);
-    localStorage.removeItem('currentScreen');
+    setCurrentScreen('login');
   };
 
-  const updateProjects = (newProjects) => {
+  const updateProjects = async (newProjects) => {
     setProjects(newProjects);
-    if (user) {
-      saveUserProjects(user.name, newProjects);
-    }
+    await saveProjects(newProjects);
   };
+
+  if (loading) return <div className="loading">Загрузка...</div>;
 
   if (!user) {
     return <LoginScreen onLogin={handleLogin} />;
@@ -124,7 +114,6 @@ function App() {
         🎓 WIP-лимиты · Scrumban · Квизы · Обучение Agile · Достижения
       </p>
       </footer>
-      {/* AI-ассистент */}
       <AiAssistant />
     </div>
   );

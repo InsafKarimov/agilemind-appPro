@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Confetti from 'react-confetti';
+import { getAchievements, addAchievement } from '../utils/api';
 
 const QUIZZES = [
   {
@@ -7,9 +8,9 @@ const QUIZZES = [
     title: '📘 Основы Agile',
     description: 'Проверь знание базовых принципов Agile и Манифеста.',
     questions: [
-      { text: 'Что такое WIP-лимит?', options: ['Максимум задач в работе', 'Время спринта', 'Количество сотрудников'], correct: 0, hint: 'WIP расшифровывается как Work In Progress — незавершённая работа. Лимит ограничивает количество параллельных задач.' },
-      { text: 'Как контекстные подсказки помогают бороться с «Agile-театром»?', options: ['Увеличивают число встреч', 'Объясняют последствия действий', 'Отключают стендапы'], correct: 1, hint: 'Agile-театр — это формальное выполнение ритуалов без понимания. Подсказки объясняют ПОЧЕМУ нельзя превышать лимит.' },
-      { text: 'Что из перечисленного является признаком «Agile-театра»?', options: ['Обсуждение реальных проблем', 'Формальные ретроспективы без изменений', 'Гибкое планирование'], correct: 1, hint: 'Если ретроспективы проводятся, но выводы не применяются — это чистый театр.' }
+      { text: 'Что такое WIP-лимит?', options: ['Максимум задач в работе', 'Время спринта', 'Количество сотрудников'], correct: 0, hint: 'WIP расшифровывается как Work In Progress — незавершённая работа.' },
+      { text: 'Как контекстные подсказки помогают бороться с «Agile-театром»?', options: ['Увеличивают число встреч', 'Объясняют последствия действий', 'Отключают стендапы'], correct: 1, hint: 'Объясняют, почему нельзя превышать лимит.' },
+      { text: 'Что из перечисленного является признаком «Agile-театра»?', options: ['Обсуждение реальных проблем', 'Формальные ретроспективы без изменений', 'Гибкое планирование'], correct: 1, hint: 'Ретроспективы без изменений — это театр.' }
     ],
     passingScore: 2,
     achievement: 'quiz_basics_passed'
@@ -19,9 +20,9 @@ const QUIZZES = [
     title: '🏆 Продвинутый Agile',
     description: 'Проверь знание гибридных методологий и продвинутых концепций.',
     questions: [
-      { text: 'Почему гибридный подход Scrumban эффективнее?', options: ['Убирает все встречи', 'Сочетает спринты с WIP', 'Увеличивает документацию'], correct: 1, hint: 'Scrumban берёт лучшее из Scrum (ритм спринтов) и Kanban (WIP-лимиты).' },
-      { text: 'Что такое story points?', options: ['Оценка сложности задачи', 'Время в часах', 'Количество строк кода'], correct: 0, hint: 'Story points — относительная оценка сложности, а не время в часах.' },
-      { text: 'Как часто проводится ретроспектива в Scrum?', options: ['После каждого спринта', 'Раз в месяц', 'В конце проекта'], correct: 0, hint: 'Ретроспектива — ключевое событие Scrum, проводится после каждого спринта.' }
+      { text: 'Почему гибридный подход Scrumban эффективнее?', options: ['Убирает все встречи', 'Сочетает спринты с WIP', 'Увеличивает документацию'], correct: 1, hint: 'Scrumban = Scrum + Kanban.' },
+      { text: 'Что такое story points?', options: ['Оценка сложности задачи', 'Время в часах', 'Количество строк кода'], correct: 0, hint: 'Относительная оценка сложности.' },
+      { text: 'Как часто проводится ретроспектива в Scrum?', options: ['После каждого спринта', 'Раз в месяц', 'В конце проекта'], correct: 0, hint: 'После каждого спринта.' }
     ],
     passingScore: 2,
     achievement: 'quiz_advanced_passed'
@@ -31,10 +32,10 @@ const QUIZZES = [
     title: '🎓 Agile-эксперт',
     description: 'Финальный квиз для настоящих экспертов!',
     questions: [
-      { text: 'Что означает термин "инкремент" в Scrum?', options: ['Работающий продукт после спринта', 'План на следующий спринт', 'Список задач'], correct: 0, hint: 'Инкремент — это работающая версия продукта, которую команда обещает доставить в конце спринта.' },
-      { text: 'Что делает Scrum Master?', options: ['Управляет бюджетом', 'Убирает препятствия и налаживает процессы', 'Пишет код'], correct: 1, hint: 'Scrum Master — это servant leader, который помогает команде следовать процессу и убирает блокеры.' },
-      { text: 'Какой фреймворк использует WIP-лимиты?', options: ['Scrum', 'Kanban', 'Waterfall'], correct: 1, hint: 'WIP-лимиты — основа Kanban, они ограничивают количество незавершённых задач.' },
-      { text: 'Что такое бэклог?', options: ['Список приоритетных задач для разработки', 'Отчёт о спринте', 'Ежедневная встреча'], correct: 0, hint: 'Бэклог — это список всех задач, которые нужно сделать, отсортированный по приоритету.' }
+      { text: 'Что означает термин "инкремент" в Scrum?', options: ['Работающий продукт после спринта', 'План на следующий спринт', 'Список задач'], correct: 0, hint: 'Работающая версия продукта.' },
+      { text: 'Что делает Scrum Master?', options: ['Управляет бюджетом', 'Убирает препятствия и налаживает процессы', 'Пишет код'], correct: 1, hint: 'Убирает препятствия.' },
+      { text: 'Какой фреймворк использует WIP-лимиты?', options: ['Scrum', 'Kanban', 'Waterfall'], correct: 1, hint: 'Kanban.' },
+      { text: 'Что такое бэклог?', options: ['Список приоритетных задач', 'Отчёт о спринте', 'Ежедневная встреча'], correct: 0, hint: 'Список задач.' }
     ],
     passingScore: 3,
     achievement: 'quiz_expert_passed'
@@ -47,26 +48,39 @@ export default function QuizzesPage({ onBack }) {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [showHint, setShowHint] = useState({});
-  const [quizStatus, setQuizStatus] = useState(() => {
-    const saved = {};
-    QUIZZES.forEach(q => {
-      saved[q.id] = localStorage.getItem(q.achievement) === 'true';
-    });
-    return saved;
-  });
+  const [achievementsList, setAchievementsList] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const markComplete = (quizId) => {
-    setQuizStatus(prev => ({ ...prev, [quizId]: true }));
-  };
+  // Загрузка достижений из БД
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await getAchievements();
+        setAchievementsList(data);
+      } catch (err) {
+        console.error('Ошибка загрузки достижений:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const hasAchievement = (key) => achievementsList.includes(key);
+  
+  const quizStatus = {};
+  QUIZZES.forEach(q => {
+    quizStatus[q.id] = hasAchievement(q.achievement);
+  });
 
   const allCompleted = Object.values(quizStatus).every(v => v === true);
-  const allCompletedBefore = localStorage.getItem('all_quizzes_completed') === 'true';
+  const allCompletedBefore = hasAchievement('all_quizzes_completed');
 
   useEffect(() => {
     if (allCompleted && !allCompletedBefore) {
       setShowConfetti(true);
-      localStorage.setItem('all_quizzes_completed', 'true');
+      addAchievement('all_quizzes_completed');
       setTimeout(() => setShowConfetti(false), 5000);
     }
   }, [allCompleted, allCompletedBefore]);
@@ -75,7 +89,7 @@ export default function QuizzesPage({ onBack }) {
     setShowHint(prev => ({ ...prev, [idx]: !prev[idx] }));
   };
 
-  const submitQuiz = () => {
+  const submitQuiz = async () => {
     let correct = 0;
     selectedQuiz.questions.forEach((q, i) => {
       if (parseInt(answers[i]) === q.correct) correct++;
@@ -84,8 +98,8 @@ export default function QuizzesPage({ onBack }) {
     setSubmitted(true);
     const passed = correct >= selectedQuiz.passingScore;
     if (passed) {
-      localStorage.setItem(selectedQuiz.achievement, 'true');
-      markComplete(selectedQuiz.id);
+      await addAchievement(selectedQuiz.achievement);
+      setAchievementsList(prev => [...prev, selectedQuiz.achievement]);
     }
   };
 
@@ -95,6 +109,10 @@ export default function QuizzesPage({ onBack }) {
     setSubmitted(false);
     setShowHint({});
   };
+
+  if (loading) {
+    return <div style={{ minHeight: '100vh', background: '#f3f4f6', padding: '24px' }}>Загрузка...</div>;
+  }
 
   if (selectedQuiz && !submitted) {
     return (

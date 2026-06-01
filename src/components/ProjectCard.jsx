@@ -7,17 +7,19 @@ export default function ProjectCard({ project, onOpen, onDelete, onEdit }) {
     Scrumban: '🔄'
   };
 
+  const truncateName = (name, maxLength = 25) => {
+          if (name.length <= maxLength) return name;
+          return name.slice(0, maxLength) + '...';
+        };
+
   return (
     <div className="project-card">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 className="project-name">{project.name}</h3>
+        <h3 className="project-name" title={project.name}>
+          {truncateName(project.name)}
+        </h3>
         <button 
-          onClick={() => {
-            const newName = prompt('Новое название проекта:', project.name);
-            if (newName && newName.trim()) {
-              onEdit(project.id, newName.trim());
-            }
-          }}
+          onClick={() => onEdit(project)}   // ← ТУТ ИЗМЕНЕНИЕ: передаём весь проект
           style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer', color: '#6b7280' }}
           title="Редактировать название"
         >

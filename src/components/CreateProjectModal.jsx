@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
+import Modal from './Modal';
 
 export default function CreateProjectModal({ onClose, onCreate }) {
   const [name, setName] = useState('');
   const [methodology, setMethodology] = useState('Scrumban');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleCreate = () => {
     if (name.trim()) {
       onCreate(name.trim(), methodology);
       onClose();
@@ -13,33 +13,36 @@ export default function CreateProjectModal({ onClose, onCreate }) {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <h2 className="modal-title">📁 Создать проект</h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Название проекта"
-            className="modal-input"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            autoFocus
-          />
-          <select
-            className="modal-select"
-            value={methodology}
-            onChange={(e) => setMethodology(e.target.value)}
-          >
-            <option value="Scrum">🏃 Scrum (только спринты)</option>
-            <option value="Kanban">📋 Kanban (только WIP)</option>
-            <option value="Scrumban">🔄 Scrumban (спринты + WIP) 🌟</option>
-          </select>
-          <div className="modal-buttons">
-            <button type="submit" className="btn-primary">Создать</button>
-            <button type="button" className="btn-secondary" onClick={onClose}>Отмена</button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Modal
+      isOpen={true}
+      onClose={onClose}
+      title="📁 Создать проект"
+      buttons={[
+        { text: 'Создать', onClick: handleCreate, variant: 'success' },
+        { text: 'Отмена', onClick: onClose, variant: 'default' }
+      ]}
+    >
+      <input
+        type="text"
+        placeholder="Название проекта"
+        className="modal-input"
+        value={name}
+        onChange={(e) => setName(e.target.value.slice(0, 25))}
+        maxLength={25}
+        autoFocus
+      />
+      <p style={{ fontSize: '11px', color: '#9ca3af', marginTop: '-8px', marginBottom: '8px' }}>
+        {name.length}/25 символов
+      </p>
+      <select
+        className="modal-select"
+        value={methodology}
+        onChange={(e) => setMethodology(e.target.value)}
+      >
+        <option value="Scrum">🏃 Scrum (только спринты)</option>
+        <option value="Kanban">📋 Kanban (только WIP)</option>
+        <option value="Scrumban">🔄 Scrumban (спринты + WIP) 🌟</option>
+      </select>
+    </Modal>
   );
 }

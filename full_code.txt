@@ -1,0 +1,4641 @@
+﻿===== C:\Users\carim\Desktop\agilemind-appPro\src\components\Achievements.jsx =====
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\AiAssistant.jsx =====
+import React, { useState, useRef, useEffect } from 'react';
+
+const FAQ = [
+  { q: /wip|Р»РёРјРёС‚/i, a: 'рџ“Љ WIP-Р»РёРјРёС‚ вЂ” Р·РµР»С‘РЅР°СЏ РєРЅРѕРїРєР° РЅР°Рґ РєРѕР»РѕРЅРєРѕР№ В«Р’ СЂР°Р±РѕС‚РµВ». РЈСЃС‚Р°РЅРѕРІРё 2-3 Р·Р°РґР°С‡Рё РЅР° С‡РµР»РѕРІРµРєР° вЂ” СЌС‚Рѕ СѓСЃРєРѕСЂРёС‚ РїРѕС‚РѕРє.' },
+  { q: /agile/i, a: 'рџ”„ Agile вЂ” РїРѕРґС…РѕРґ СЃ РёС‚РµСЂР°С†РёСЏРјРё. Р’РјРµСЃС‚Рѕ РґРѕР»РіРѕРіРѕ РїР»Р°РЅР° вЂ” РєРѕСЂРѕС‚РєРёРµ СЃРїСЂРёРЅС‚С‹ Рё С‡Р°СЃС‚Р°СЏ РѕР±СЂР°С‚РЅР°СЏ СЃРІСЏР·СЊ.' },
+  { q: /scrum/i, a: 'рџЏѓ Scrum вЂ” СЃРїСЂРёРЅС‚С‹ (1-4 РЅРµРґРµР»Рё), СЂРѕР»Рё (Product Owner, Scrum Master, РєРѕРјР°РЅРґР°), СЃРѕР±С‹С‚РёСЏ (РїР»Р°РЅРёСЂРѕРІР°РЅРёРµ, СЃС‚РµРЅРґР°Рї, СЂРµС‚СЂРѕСЃРїРµРєС‚РёРІР°).' },
+  { q: /kanban/i, a: 'рџ“‹ Kanban вЂ” РґРѕСЃРєР° СЃ РєРѕР»РѕРЅРєР°РјРё Рё WIP-Р»РёРјРёС‚Р°РјРё. РќРµС‚ СЃРїСЂРёРЅС‚РѕРІ, Р·Р°РґР°С‡Рё РёРґСѓС‚ РЅРµРїСЂРµСЂС‹РІРЅРѕ.' },
+  { q: /scrumban/i, a: 'рџ”„ Scrumban вЂ” РіРёР±СЂРёРґ. Р•СЃС‚СЊ СЃРїСЂРёРЅС‚С‹ (РєР°Рє РІ Scrum) Рё WIP-Р»РёРјРёС‚С‹ (РєР°Рє РІ Kanban). Р РµР°Р»РёР·РѕРІР°РЅРѕ РІ РїСЂРѕРµРєС‚Рµ!' },
+  { q: /СЂРµС‚СЂРѕСЃРїРµРєС‚РёРІ/i, a: 'рџ“ќ Р РµС‚СЂРѕСЃРїРµРєС‚РёРІР° вЂ” РІСЃС‚СЂРµС‡Р° РїРѕСЃР»Рµ СЃРїСЂРёРЅС‚Р°. Р§С‚Рѕ СЃРґРµР»Р°Р»Рё Р»СѓС‡С€Рµ? Р§С‚Рѕ РјРµС€Р°РµС‚? (Р’ РїСЂРѕРµРєС‚Рµ вЂ” Р·Р°РіР»СѓС€РєР°, РјРѕР¶РЅРѕ РґРѕСЂР°Р±РѕС‚Р°С‚СЊ РІ Р±СѓРґСѓС‰РµРј).' },
+  { q: /СЃС‚РµРЅРґР°Рї|daily/i, a: 'вЂпёЏ Daily вЂ” 15 РјРёРЅСѓС‚, 3 РІРѕРїСЂРѕСЃР°: С‡С‚Рѕ СЃРґРµР»Р°Р» РІС‡РµСЂР°? С‡С‚Рѕ СЃРґРµР»Р°СЋ СЃРµРіРѕРґРЅСЏ? РєР°РєРёРµ РїСЂРѕР±Р»РµРјС‹?' },
+  { q: /product owner/i, a: 'рџ‘‘ Product Owner вЂ” СѓРїСЂР°РІР»СЏРµС‚ Р±СЌРєР»РѕРіРѕРј, СЃС‚Р°РІРёС‚ РїСЂРёРѕСЂРёС‚РµС‚С‹, РѕС‚РІРµС‡Р°РµС‚ Р·Р° С†РµРЅРЅРѕСЃС‚СЊ.' },
+  { q: /scrum master/i, a: 'рџ›ЎпёЏ Scrum Master вЂ” СѓР±РёСЂР°РµС‚ РїСЂРµРїСЏС‚СЃС‚РІРёСЏ, СѓС‡РёС‚ РєРѕРјР°РЅРґСѓ СЃР»РµРґРѕРІР°С‚СЊ РїСЂРѕС†РµСЃСЃСѓ.' },
+  { q: /story points/i, a: 'рџЋЇ Story points вЂ” РѕС†РµРЅРєР° СЃР»РѕР¶РЅРѕСЃС‚Рё (1,2,3,5,8...). РќРµ С‡Р°СЃС‹, Р° РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅР°СЏ СЃР»РѕР¶РЅРѕСЃС‚СЊ.' },
+  { q: /РёРЅРєСЂРµРјРµРЅС‚/i, a: 'рџ“¦ РРЅРєСЂРµРјРµРЅС‚ вЂ” СЂР°Р±РѕС‚Р°СЋС‰Р°СЏ РІРµСЂСЃРёСЏ РїСЂРѕРґСѓРєС‚Р° РїРѕСЃР»Рµ СЃРїСЂРёРЅС‚Р°.' },
+  { q: /С‚РµР°С‚СЂ|agile-С‚РµР°С‚СЂ/i, a: 'рџЋ­ Agile-С‚РµР°С‚СЂ вЂ” СЃС‚РµРЅРґР°РїС‹ Рё СЂРµС‚СЂРѕСЃРїРµРєС‚РёРІС‹ В«РґР»СЏ РіР°Р»РѕС‡РєРёВ», Р±РµР· РёР·РјРµРЅРµРЅРёР№. РџСЂРѕРµРєС‚ РїРѕРјРѕРіР°РµС‚ Р±РѕСЂРѕС‚СЊСЃСЏ СЃ СЌС‚РёРј С‡РµСЂРµР· СѓРјРЅС‹Рµ РїРѕРґСЃРєР°Р·РєРё.' },
+  { q: /СЃРµСЂС‚РёС„РёРєР°С‚/i, a: 'рџЋ“ РЎРµСЂС‚РёС„РёРєР°С‚ РІС‹РґР°С‘С‚СЃСЏ РїРѕСЃР»Рµ РїСЂРѕС…РѕР¶РґРµРЅРёСЏ 4 РјРѕРґСѓР»РµР№ РІ СЂР°Р·РґРµР»Рµ В«РћР±СѓС‡РµРЅРёРµВ». РџРѕСЏРІР»СЏРµС‚СЃСЏ РІ РїСЂРѕС„РёР»Рµ.' },
+];
+
+const getAIResponse = (question) => {
+  for (const item of FAQ) {
+    if (item.q.test(question)) {
+      return item.a;
+    }
+  }
+  return `рџ“љ РҐРѕСЂРѕС€РёР№ РІРѕРїСЂРѕСЃ РїСЂРѕ "${question}"! Р’ РґРёРїР»РѕРјРµ СЌС‚Р° С‚РµРјР° СЂР°СЃРєСЂС‹С‚Р°. Р РµРєРѕРјРµРЅРґСѓСЋ РёР·СѓС‡РёС‚СЊ СЂР°Р·РґРµР» В«РћР±СѓС‡РµРЅРёРµВ» РёР»Рё РїСЂРѕР№С‚Рё РєРІРёР·.`;
+};
+
+export default function AiAssistant() {
+  const [messages, setMessages] = useState([
+    { role: 'ai', content: 'РџСЂРёРІРµС‚! РЇ AI-Р°СЃСЃРёСЃС‚РµРЅС‚ AgileMind. РЎРїСЂРѕСЃРё РјРµРЅСЏ РїСЂРѕ Agile, Scrum, Kanban, WIP-Р»РёРјРёС‚С‹ РёР»Рё Scrumban! рџљЂ' }
+  ]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const sendMessage = () => {
+    if (!input.trim() || loading) return;
+
+    const userMessage = input.trim();
+    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setInput('');
+    setLoading(true);
+
+    setTimeout(() => {
+      const response = getAIResponse(userMessage);
+      setMessages(prev => [...prev, { role: 'ai', content: response }]);
+      setLoading(false);
+    }, 500);
+  };
+
+  return (
+    <>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          width: '56px',
+          height: '56px',
+          borderRadius: '28px',
+          background: 'linear-gradient(135deg, #667eea, #764ba2)',
+          color: 'white',
+          border: 'none',
+          cursor: 'pointer',
+          fontSize: '24px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          zIndex: 999,
+          transition: 'transform 0.2s'
+        }}
+        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+      >
+        рџ¤–
+      </button>
+
+      {isOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '90px',
+            right: '24px',
+            width: '380px',
+            height: '500px',
+            background: 'white',
+            borderRadius: '20px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+            display: 'flex',
+            flexDirection: 'column',
+            zIndex: 999,
+            overflow: 'hidden'
+          }}
+        >
+          <div
+            style={{
+              padding: '16px',
+              background: 'linear-gradient(135deg, #667eea, #764ba2)',
+              color: 'white',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            <span style={{ fontWeight: 'bold' }}>рџ¤– AgileMind AI</span>
+            <button
+              onClick={() => setIsOpen(false)}
+              style={{ background: 'none', border: 'none', color: 'white', fontSize: '20px', cursor: 'pointer' }}
+            >
+              вњ•
+            </button>
+          </div>
+
+          <div
+            style={{
+              flex: 1,
+              padding: '16px',
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px'
+            }}
+          >
+            {messages.map((msg, idx) => (
+              <div
+                key={idx}
+                style={{
+                  alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                  maxWidth: '80%'
+                }}
+              >
+                <div
+                  style={{
+                    background: msg.role === 'user' ? '#4f46e5' : '#f3f4f6',
+                    color: msg.role === 'user' ? 'white' : '#1f2937',
+                    padding: '10px 14px',
+                    borderRadius: msg.role === 'user' ? '18px 4px 18px 18px' : '4px 18px 18px 18px',
+                    fontSize: '14px',
+                    wordWrap: 'break-word'
+                  }}
+                >
+                  {msg.content}
+                </div>
+              </div>
+            ))}
+            {loading && (
+              <div style={{ alignSelf: 'flex-start' }}>
+                <div style={{ background: '#f3f4f6', padding: '10px 14px', borderRadius: '4px 18px 18px 18px', fontSize: '14px' }}>
+                  рџ¤” Р”СѓРјР°СЋ...
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          <div style={{ padding: '12px', borderTop: '1px solid #e5e7eb', display: 'flex', gap: '8px' }}>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+              placeholder="РЎРїСЂРѕСЃРё РїСЂРѕ Agile..."
+              style={{
+                flex: 1,
+                padding: '10px',
+                border: '1px solid #e5e7eb',
+                borderRadius: '20px',
+                outline: 'none'
+              }}
+            />
+            <button
+              onClick={sendMessage}
+              disabled={loading}
+              style={{
+                background: '#4f46e5',
+                color: 'white',
+                border: 'none',
+                borderRadius: '20px',
+                padding: '8px 20px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.6 : 1
+              }}
+            >
+              РћС‚РїСЂР°РІРёС‚СЊ
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\BurndownChart.jsx =====
+import React from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+
+export default function BurndownChart({ tasks, sprintDays = 14 }) {
+  // РЎС‡РёС‚Р°РµРј РѕР±С‰РµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ Р·Р°РґР°С‡
+  const totalTasks = tasks.length;
+  const completedTasks = tasks.filter(t => t.status === 'done').length;
+  
+  // Р“РµРЅРµСЂРёСЂСѓРµРј РґР°РЅРЅС‹Рµ РґР»СЏ РіСЂР°С„РёРєР°
+  const data = [];
+  const remainingPerDay = Math.ceil(totalTasks / sprintDays);
+  let remaining = totalTasks;
+  
+  for (let day = 0; day <= sprintDays; day++) {
+    if (day === 0) {
+      data.push({ day: 'РЎС‚Р°СЂС‚', remaining });
+    } else if (day === sprintDays) {
+      data.push({ day: 'Р¤РёРЅРёС€', remaining: 0 });
+    } else {
+      remaining = Math.max(0, remaining - remainingPerDay);
+      data.push({ day: `Р”РµРЅСЊ ${day}`, remaining });
+    }
+  }
+  
+  // РРґРµР°Р»СЊРЅР°СЏ Р»РёРЅРёСЏ (СЂР°РІРЅРѕРјРµСЂРЅРѕРµ СЃРіРѕСЂР°РЅРёРµ)
+  const idealData = [];
+  for (let day = 0; day <= sprintDays; day++) {
+    const idealRemaining = Math.max(0, totalTasks - (totalTasks / sprintDays) * day);
+    idealData.push({ remaining: Math.round(idealRemaining) });
+  }
+  
+  const chartData = data.map((item, idx) => ({
+    day: item.day,
+    РїР»Р°РЅ: idealData[idx]?.remaining || 0,
+    С„Р°РєС‚: idx === 0 ? totalTasks : (idx === sprintDays ? 0 : item.remaining)
+  }));
+
+  return (
+    <div className="burndown-container">
+      <h3 className="burndown-title">рџ“‰ Burndown Chart</h3>
+      <p className="burndown-stats">
+        Р’СЃРµРіРѕ Р·Р°РґР°С‡: {totalTasks} | Р’С‹РїРѕР»РЅРµРЅРѕ: {completedTasks} | РћСЃС‚Р°Р»РѕСЃСЊ: {totalTasks - completedTasks}
+      </p>
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <XAxis dataKey="day" stroke="#6b7280" fontSize={12} />
+          <YAxis stroke="#6b7280" fontSize={12} />
+          <Tooltip contentStyle={{ background: 'white', borderRadius: '8px', border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
+          <Line type="monotone" dataKey="РїР»Р°РЅ" stroke="#10b981" strokeWidth={2} dot={false} name="РџР»Р°РЅ" />
+          <Line type="monotone" dataKey="С„Р°РєС‚" stroke="#ef4444" strokeWidth={2} dot={{ r: 4, strokeWidth: 0 }} name="Р¤Р°РєС‚" />
+        </LineChart>
+      </ResponsiveContainer>
+      <p className="burndown-note">
+        рџ’Ў Р—РµР»С‘РЅР°СЏ Р»РёРЅРёСЏ вЂ” РёРґРµР°Р»СЊРЅС‹Р№ С‚РµРјРї. РљСЂР°СЃРЅР°СЏ вЂ” СЂРµР°Р»СЊРЅРѕРµ РІС‹РїРѕР»РЅРµРЅРёРµ. Р§РµРј Р±Р»РёР¶Рµ РєСЂР°СЃРЅР°СЏ Рє Р·РµР»С‘РЅРѕР№, С‚РµРј Р»СѓС‡С€Рµ.
+      </p>
+    </div>
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\CreateProjectModal.jsx =====
+import React, { useState } from 'react';
+
+export default function CreateProjectModal({ onClose, onCreate }) {
+  const [name, setName] = useState('');
+  const [methodology, setMethodology] = useState('Scrumban');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (name.trim()) {
+      onCreate(name.trim(), methodology);
+      onClose();
+    }
+  };
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <h2 className="modal-title">рџ“Ѓ РЎРѕР·РґР°С‚СЊ РїСЂРѕРµРєС‚</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="РќР°Р·РІР°РЅРёРµ РїСЂРѕРµРєС‚Р°"
+            className="modal-input"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoFocus
+          />
+          <select
+            className="modal-select"
+            value={methodology}
+            onChange={(e) => setMethodology(e.target.value)}
+          >
+            <option value="Scrum">рџЏѓ Scrum (С‚РѕР»СЊРєРѕ СЃРїСЂРёРЅС‚С‹)</option>
+            <option value="Kanban">рџ“‹ Kanban (С‚РѕР»СЊРєРѕ WIP)</option>
+            <option value="Scrumban">рџ”„ Scrumban (СЃРїСЂРёРЅС‚С‹ + WIP) рџЊџ</option>
+          </select>
+          <div className="modal-buttons">
+            <button type="submit" className="btn-primary">РЎРѕР·РґР°С‚СЊ</button>
+            <button type="button" className="btn-secondary" onClick={onClose}>РћС‚РјРµРЅР°</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\Dashboard.jsx =====
+import React, { useState } from 'react';
+import ProjectCard from './ProjectCard';
+import CreateProjectModal from './CreateProjectModal';
+import KanbanBoard from './KanbanBoard';
+import LearningMaterials from './LearningMaterials';
+
+import TeamPage from './TeamPage';
+
+export default function Dashboard({ user, projects, onUpdateProjects, onOpenQuizzes, onOpenProfile, onOpenProject, onLogout  }) {
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [currentProject, setCurrentProject] = useState(null);
+  const [showLearning, setShowLearning] = useState(false);
+
+  const [showTeam, setShowTeam] = useState(false);
+
+  const editProject = (id, newName) => {
+  const newProjects = projects.map(p => p.id === id ? { ...p, name: newName } : p);
+    onUpdateProjects(newProjects);
+  };
+
+  const createProject = (name, methodology) => {
+    const newProject = {
+      id: Date.now(),
+      name,
+      methodology,
+      createdAt: new Date().toLocaleDateString(),
+      tasks: [],
+      wipLimit: 2,
+      activeSprint: null,
+      quizPassed: false
+    };
+    onUpdateProjects([...projects, newProject]);
+  };
+
+  const deleteProject = (id) => {
+    if (window.confirm('РЈРґР°Р»РёС‚СЊ РїСЂРѕРµРєС‚?')) {
+      onUpdateProjects(projects.filter(p => p.id !== id));
+    }
+  };
+
+  const updateProject = (updated) => {
+    const newProjects = projects.map(p => p.id === updated.id ? updated : p);
+    onUpdateProjects(newProjects);
+    setCurrentProject(updated);
+  };
+
+  const passedCount = projects.filter(p => p.quizPassed).length;
+
+  if (showTeam) {
+    return <TeamPage onBack={() => setShowTeam(false)} />;
+  }
+
+
+  if (currentProject) {
+    return (
+      <KanbanBoard
+        project={currentProject}
+        onBack={() => setCurrentProject(null)}
+        onUpdate={updateProject}
+      />
+    );
+  }
+
+  return (
+    <div className="app-container">
+      <div className="container">
+        <div className="dashboard-header">
+          <div>
+            <h1 className="dashboard-title">рџ“Љ AgileMind</h1>
+            <p className="dashboard-subtitle">РЈРїСЂР°РІР»РµРЅРёРµ РїСЂРѕРµРєС‚Р°РјРё СЃ РѕР±СѓС‡РµРЅРёРµРј</p>
+          </div>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+            {/* <div className="badge-counter">рџЏ… Agile-СЌРєСЃРїРµСЂС‚РѕРІ: {passedCount} / {projects.length}</div> */}
+            <button onClick={() => setShowTeam(true)} className="btn-team" title="вЂпёЏ Р—Р°РіР»СЏРЅРё СЃСЋРґР°, С‡С‚РѕР±С‹ РЅРµ Р·Р°Р±С‹С‚СЊ РїСЂРѕ СЃС‚РµРЅРґР°Рї Рё СЂРµС‚СЂРѕСЃРїРµРєС‚РёРІСѓ">рџ‘Ґ РљРѕРјР°РЅРґР°</button>
+            <button onClick={onOpenQuizzes} style={{ background: '#f59e0b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }} title="рџ§  РџСЂРѕРІРµСЂРёС‚СЊ Р·РЅР°РЅРёСЏ РїРѕ Agile Рё РіРёР±СЂРёРґРЅС‹Рј РјРµС‚РѕРґРѕР»РѕРіРёСЏРј. РџРѕР»СѓС‡РёС‚Рµ РґРѕСЃС‚РёР¶РµРЅРёРµ 'РђР±СЃРѕР»СЋС‚РЅС‹Р№ С‡РµРјРїРёРѕРЅ'">рџЏ… РљРІРёР·С‹</button>
+            <button onClick={() => setShowLearning(true)} style={{ background: '#10b981', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }} title="рџ“љ 4 РјРѕРґСѓР»СЏ РїРѕ Agile, Scrum, Kanban Рё Scrumban. РџСЂРѕР№РґРё РІСЃРµ вЂ” РїРѕР»СѓС‡Рё СЃРµСЂС‚РёС„РёРєР°С‚!">рџ“љ РћР±СѓС‡РµРЅРёРµ</button>
+            <button onClick={onOpenProfile} style={{ background: '#4f46e5', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }} title="рџ‘¤ Р›РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚: РґРѕСЃС‚РёР¶РµРЅРёСЏ, СЃС‚Р°С‚РёСЃС‚РёРєР°, СЃРµСЂС‚РёС„РёРєР°С‚С‹ Рё РїСЂРѕРіСЂРµСЃСЃ РѕР±СѓС‡РµРЅРёСЏ.">рџ‘¤ РџСЂРѕС„РёР»СЊ</button>
+            <button onClick={onLogout} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>рџљЄ Р’С‹Р№С‚Рё</button>
+          </div>
+        </div>
+          <div className="welcome-banner">
+            <div>
+              <h2 className="welcome-title">
+                РџСЂРёРІРµС‚, {user.name}! рџ‘‹
+              </h2>
+              <p className="welcome-time">
+                {new Date().getHours() < 12 ? 'рџЊ… Р”РѕР±СЂРѕРµ СѓС‚СЂРѕ' : new Date().getHours() < 18 ? 'вЂпёЏ Р”РѕР±СЂС‹Р№ РґРµРЅСЊ' : 'рџЊ™ Р”РѕР±СЂС‹Р№ РІРµС‡РµСЂ'}! 
+                РџСЂРѕРґРѕР»Р¶Р°Р№ СЂР°Р·РІРёРІР°С‚СЊ Agile-РЅР°РІС‹РєРё.
+              </p>
+            </div>
+            <div className="welcome-stats">
+                              рџЏ… {[
+                  projects.filter(p => p.quizPassed).length > 0,
+                  localStorage.getItem('quiz_basics_passed') === 'true',
+                  localStorage.getItem('quiz_advanced_passed') === 'true',
+                  localStorage.getItem('quiz_expert_passed') === 'true',
+                  localStorage.getItem('certificate_earned') === 'true',
+                  localStorage.getItem('all_quizzes_completed') === 'true'
+                ].filter(Boolean).length} РґРѕСЃС‚РёР¶РµРЅРёР№
+            </div>
+          </div>
+
+            {projects.length === 0 ? (
+            <div className="empty-state" style={{ textAlign: 'center', padding: '60px' }}>
+              <div style={{ fontSize: '64px', marginBottom: '16px' }}>рџљЂ</div>
+              <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>РќР°С‡РЅРёС‚Рµ СЃ РїРµСЂРІРѕРіРѕ РїСЂРѕРµРєС‚Р°</h2>
+              <p style={{ color: '#6b7280', marginBottom: '24px', maxWidth: '400px', margin: '0 auto 24px auto' }}>
+                AgileMind РїРѕРјРѕР¶РµС‚ СѓРїСЂР°РІР»СЏС‚СЊ Р·Р°РґР°С‡Р°РјРё РїРѕ РіРёР±РєРёРј РјРµС‚РѕРґРѕР»РѕРіРёСЏРј.<br />
+                Р’С‹Р±РµСЂРёС‚Рµ Scrum, Kanban РёР»Рё Scrumban.
+              </p>
+              <button className="btn-primary" onClick={() => setShowCreateModal(true)} style={{ padding: '12px 24px', fontSize: '16px' }}>
+                + РЎРѕР·РґР°С‚СЊ РїСЂРѕРµРєС‚
+              </button>
+            </div>
+          ) : (
+            
+          <div className="project-grid">
+            {projects.map(p => (
+              <ProjectCard key={p.id} project={p} onOpen={(project) => onOpenProject(project)} onDelete={deleteProject} onEdit={editProject} />
+            ))}
+            <button className="add-project-btn" onClick={() => setShowCreateModal(true)}>+</button>
+          </div>
+        )}
+
+        {showCreateModal && <CreateProjectModal onClose={() => setShowCreateModal(false)} onCreate={createProject} />}
+        {showLearning && <LearningMaterials onClose={() => setShowLearning(false)} />}
+      </div>
+      
+    </div>
+    
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\KanbanBoard.jsx =====
+import React, { useState, useEffect } from 'react';
+import TaskModal from './TaskModal';
+import SprintBlock from './SprintBlock';
+import QuizModal from './QuizModal';
+import BurndownChart from './BurndownChart';
+
+export default function KanbanBoard({ project, onBack, onUpdate }) {
+  const [tasks, setTasks] = useState(project.tasks || []);
+  const [wipLimit, setWipLimit] = useState(project.wipLimit || 2);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
+  const [priorityFilter, setPriorityFilter] = useState('all');
+
+  const showWip = project.methodology !== 'Scrum';
+
+  useEffect(() => {
+    onUpdate({ ...project, tasks, wipLimit });
+  }, [tasks, wipLimit]);
+
+  const filterTasks = (tasksList) => {
+    if (priorityFilter === 'all') return tasksList;
+    return tasksList.filter(t => t.priority === priorityFilter);
+  };
+
+  
+  const todo = tasks.filter(t => t.status === 'todo');
+  const inprogress = tasks.filter(t => t.status === 'inprogress');
+  const done = tasks.filter(t => t.status === 'done');
+  const isWipOver = inprogress.length >= wipLimit;
+
+  const addTask = (taskData) => {
+  const newTask = {
+    id: Date.now(),
+    title: taskData.title,
+    description: taskData.description || '',
+    priority: taskData.priority,
+    status: 'todo'
+  };
+  setTasks([...tasks, newTask]);
+};
+
+const saveTask = (taskData) => {
+  if (!editingTask) return;
+  setTasks(tasks.map(t =>
+    t.id === editingTask.id
+      ? { ...t, title: taskData.title, description: taskData.description || '', priority: taskData.priority }
+      : t
+  ));
+  setEditingTask(null);
+};
+
+  const deleteTask = (id) => {
+    if (window.confirm('РЈРґР°Р»РёС‚СЊ Р·Р°РґР°С‡Сѓ?')) {
+      setTasks(tasks.filter(t => t.id !== id));
+    }
+  };
+
+  const moveTask = (id, newStatus) => {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+    
+    if (newStatus === 'inprogress' && showWip && inprogress.length >= wipLimit && task.status !== 'inprogress') {
+      alert(`вљ пёЏ РРќРўР•Р РђРљРўРР’РќРћР• РћР‘РЈР§Р•РќРР• вЂ” WIP-Р»РёРјРёС‚ РїСЂРµРІС‹С€РµРЅ!
+
+рџ“Њ Р§С‚Рѕ РїСЂРѕРёР·РѕС€Р»Рѕ:
+Р’С‹ РїС‹С‚Р°РµС‚РµСЃСЊ РґРѕР±Р°РІРёС‚СЊ Р·Р°РґР°С‡Сѓ РІ РєРѕР»РѕРЅРєСѓ В«Р’ СЂР°Р±РѕС‚РµВ», РЅРѕ С‚Р°Рј СѓР¶Рµ ${inprogress.length} РёР· ${wipLimit} Р·Р°РґР°С‡.
+
+рџ“Њ РџРѕС‡РµРјСѓ СЌС‚Рѕ РІР°Р¶РЅРѕ:
+WIP (Work In Progress) вЂ” РѕРіСЂР°РЅРёС‡РµРЅРёРµ РЅР° РєРѕР»РёС‡РµСЃС‚РІРѕ РЅРµР·Р°РІРµСЂС€С‘РЅРЅС‹С… Р·Р°РґР°С‡. РџСЂРµРІС‹С€РµРЅРёРµ Р»РёРјРёС‚Р° РїСЂРёРІРѕРґРёС‚ Рє:
+вЂў РњРЅРѕРіРѕР·Р°РґР°С‡РЅРѕСЃС‚Рё Рё РїРѕС‚РµСЂРµ С„РѕРєСѓСЃР°
+вЂў Р РѕСЃС‚Сѓ РІСЂРµРјРµРЅРё РІС‹РїРѕР»РЅРµРЅРёСЏ Р·Р°РґР°С‡
+вЂў РќР°РєРѕРїР»РµРЅРёСЋ В«СѓР·РєРёС… РјРµСЃС‚В» РІ РїСЂРѕС†РµСЃСЃРµ
+
+рџ“Њ Р§С‚Рѕ РґРµР»Р°С‚СЊ:
+1. Р—Р°РІРµСЂС€РёС‚Рµ РѕРґРЅСѓ РёР· С‚РµРєСѓС‰РёС… Р·Р°РґР°С‡ (РїРµСЂРµРјРµСЃС‚РёС‚Рµ РІ В«Р“РѕС‚РѕРІРѕВ»)
+2. РР»Рё РІРµСЂРЅРёС‚Рµ Р·Р°РґР°С‡Сѓ РІ В«Рљ РІС‹РїРѕР»РЅРµРЅРёСЋВ»
+
+рџ§  Р­С‚Рѕ РѕСЃРЅРѕРІР° Kanban-РјРµС‚РѕРґРѕР»РѕРіРёРё.`);
+      return;
+    }
+    
+    setTasks(tasks.map(t => t.id === id ? { ...t, status: newStatus } : t));
+  };
+
+  const openEditModal = (task) => {
+    setEditingTask(task);
+    setShowTaskModal(true);
+  };
+
+  const handleSprintComplete = (updatedProject) => {
+    onUpdate(updatedProject);
+  };
+
+  return (
+    <div className="board-container">
+      {showTaskModal && (
+        <TaskModal
+          task={editingTask}
+          onSave={editingTask ? saveTask : addTask}
+          onClose={() => {
+            setShowTaskModal(false);
+            setEditingTask(null);
+          }}
+        />
+      )}
+
+      {showQuiz && (
+        <QuizModal
+          onClose={() => setShowQuiz(false)}
+          onSuccess={() => onUpdate({ ...project, quizPassed: true })}
+        />
+      )}
+
+      <div className="board-wrapper">
+        <button className="back-link" onClick={onBack}>в†ђ Рљ РїСЂРѕРµРєС‚Р°Рј</button>
+
+        <div className="board-header">
+          <h1 className="board-title">{project.name}</h1>
+          <div>
+            <button className="btn-add-task" onClick={() => { setEditingTask(null); setShowTaskModal(true); }} title="вћ• РЎРѕР·РґР°С‚СЊ РЅРѕРІСѓСЋ Р·Р°РґР°С‡Сѓ. РќР°Р·РІР°РЅРёРµ, РѕРїРёСЃР°РЅРёРµ, РїСЂРёРѕСЂРёС‚РµС‚ вЂ” РІСЃС‘ РЅР°СЃС‚СЂР°РёРІР°РµС‚СЃСЏ.">вћ• Р—Р°РґР°С‡Р°</button>
+            <button className="btn-quiz" onClick={() => setShowQuiz(true)} title="рџЏ… РљРІРёР· вЂ” РїСЂРѕРІРµСЂСЊ Р·РЅР°РЅРёСЏ РїРѕ Agile (РЅСѓР¶РЅРѕ 3 РёР· 4 РїСЂР°РІРёР»СЊРЅС‹С… РѕС‚РІРµС‚РѕРІ)">рџЏ… РљРІРёР·</button>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+          <button onClick={() => setPriorityFilter('all')} style={{ padding: '6px 12px', borderRadius: '20px', border: 'none', cursor: 'pointer', background: priorityFilter === 'all' ? '#4f46e5' : '#e5e7eb', color: priorityFilter === 'all' ? 'white' : '#374151' }}>Р’СЃРµ</button>
+          <button onClick={() => setPriorityFilter('Low')} style={{ padding: '6px 12px', borderRadius: '20px', border: 'none', cursor: 'pointer', background: priorityFilter === 'Low' ? '#10b981' : '#e5e7eb', color: priorityFilter === 'Low' ? 'white' : '#374151' }}>рџџў РќРёР·РєРёР№ РїСЂРёРѕСЂРёС‚РµС‚</button>
+          <button onClick={() => setPriorityFilter('Medium')} style={{ padding: '6px 12px', borderRadius: '20px', border: 'none', cursor: 'pointer', background: priorityFilter === 'Medium' ? '#f59e0b' : '#e5e7eb', color: priorityFilter === 'Medium' ? 'white' : '#374151' }}>рџџЎ РЎСЂРµРґРЅРёР№ РїСЂРёРѕСЂРёС‚РµС‚</button>
+          <button onClick={() => setPriorityFilter('High')} style={{ padding: '6px 12px', borderRadius: '20px', border: 'none', cursor: 'pointer', background: priorityFilter === 'High' ? '#ef4444' : '#e5e7eb', color: priorityFilter === 'High' ? 'white' : '#374151' }}>рџ”ґ Р’С‹СЃРѕРєРёР№ РїСЂРёРѕСЂРёС‚РµС‚</button>
+        </div>
+
+        <SprintBlock project={project} onCompleteSprint={handleSprintComplete} />
+
+        {project.methodology !== 'Kanban' && (
+          <BurndownChart tasks={tasks} sprintDays={project.activeSprint?.weeks ? project.activeSprint.weeks * 7 : 14} />
+        )}
+
+        <div className="kanban-board">
+          <div className="kanban-column">
+            <div className="column-header column-header-blue">
+              <div className="column-header-content">
+                <h3 className="column-title" title="рџ“‹ Р—Р°РґР°С‡Рё, РєРѕС‚РѕСЂС‹Рµ РЅСѓР¶РЅРѕ СЃРґРµР»Р°С‚СЊ">рџ“‹ Рљ РІС‹РїРѕР»РЅРµРЅРёСЋ</h3>
+                <span className="column-count">{filterTasks(todo).length}</span>
+              </div>
+            </div>
+            <div className="column-content" onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); moveTask(parseInt(e.dataTransfer.getData('taskId')), 'todo'); }}>
+              {filterTasks(todo).map(t => (
+                <div key={t.id} className="task-card" draggable onDragStart={(e) => { e.dataTransfer.setData('taskId', t.id); e.target.style.opacity = '0.5'; }} onDragEnd={(e) => e.target.style.opacity = '1'}>
+                  <div className="task-card-content">
+                    <span className="task-title" onClick={() => openEditModal(t)}>{t.title}</span>
+                    <button className="task-delete" onClick={() => deleteTask(t.id)}>вњ•</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={`kanban-column ${isWipOver ? 'wip-warning' : ''}`}>
+            <div className="column-header column-header-yellow">
+              <div className="column-header-content">
+                <h3 className="column-title" title="вљ™пёЏ Р—Р°РґР°С‡Рё, РЅР°Рґ РєРѕС‚РѕСЂС‹РјРё РєРѕРјР°РЅРґР° СЂР°Р±РѕС‚Р°РµС‚ РїСЂСЏРјРѕ СЃРµР№С‡Р°СЃ. WIP-Р»РёРјРёС‚ РѕРіСЂР°РЅРёС‡РёРІР°РµС‚ РёС… РєРѕР»РёС‡РµСЃС‚РІРѕ.">вљ™пёЏ Р’ СЂР°Р±РѕС‚Рµ</h3>
+                {showWip ? (
+                  <div className="wip-control" title="рџ“љ WIP-Р»РёРјРёС‚ вЂ” РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ Р·Р°РґР°С‡ РІ СЂР°Р±РѕС‚Рµ. РџСЂРµРІС‹С€РµРЅРёРµ РІРµРґС‘С‚ Рє С…Р°РѕСЃСѓ Рё Р·Р°РјРµРґР»РµРЅРёСЋ. вњ… РџСЂР°РІРёР»Рѕ: Р·Р°РІРµСЂС€Рё РѕРґРЅСѓ вЂ” РІРѕР·СЊРјРё СЃР»РµРґСѓСЋС‰СѓСЋ.">
+                    <span className="wip-label">WIP:</span>
+                    <input type="number" min="1" max="10" value={wipLimit} onChange={(e) => setWipLimit(parseInt(e.target.value) || 1)} className="wip-input" />
+                    <span className={`wip-count ${isWipOver ? 'wip-count-over' : ''}`}> ({filterTasks(inprogress).length}/{wipLimit})</span>
+                  </div>
+                  
+                    
+                  
+                ) : (
+                  <span className="column-count">{filterTasks(inprogress).length}</span>
+                )}
+              </div>
+            </div>
+            <div className="column-content" onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); moveTask(parseInt(e.dataTransfer.getData('taskId')), 'inprogress'); }}>
+              {filterTasks(inprogress).map(t => (
+                <div key={t.id} className="task-card task-card-yellow" draggable onDragStart={(e) => { e.dataTransfer.setData('taskId', t.id); e.target.style.opacity = '0.5'; }} onDragEnd={(e) => e.target.style.opacity = '1'}>
+                  <div className="task-card-content">
+                    <span className="task-title" onClick={() => openEditModal(t)}>{t.title}</span>
+                    <button className="task-delete" onClick={() => deleteTask(t.id)}>вњ•</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="kanban-column">
+            <div className="column-header column-header-green">
+              <div className="column-header-content">
+                <h3 className="column-title" title="вњ… Р—Р°РІРµСЂС€С‘РЅРЅС‹Рµ Р·Р°РґР°С‡Рё. РС… РјРѕР¶РЅРѕ РІРµСЂРЅСѓС‚СЊ РѕР±СЂР°С‚РЅРѕ РїСЂРё РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё.">вњ… Р“РѕС‚РѕРІРѕ</h3>
+                <span className="column-count">{filterTasks(done).length}</span>
+              </div>
+            </div>
+            <div className="column-content" onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); moveTask(parseInt(e.dataTransfer.getData('taskId')), 'done'); }}>
+              {filterTasks(done).map(t => (
+                <div key={t.id} className="task-card task-card-green" draggable onDragStart={(e) => { e.dataTransfer.setData('taskId', t.id); e.target.style.opacity = '0.5'; }} onDragEnd={(e) => e.target.style.opacity = '1'}>
+                  <div className="task-card-content">
+                    <span className="task-title task-done" onClick={() => openEditModal(t)}>{t.title}</span>
+                    <button className="task-delete" onClick={() => deleteTask(t.id)}>вњ•</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="comments-placeholder">
+        <div className="comments-header">
+          <span>рџ’¬ РљРѕРјРјРµРЅС‚Р°СЂРёРё РєРѕРјР°РЅРґС‹</span>
+          <span className="comments-badge">Beta</span>
+        </div>
+        <div className="comments-list">
+          <div className="comment-item">
+            <strong>РРЅСЃР°С„:</strong> WIP-Р»РёРјРёС‚ РїРѕРјРѕРі Р·Р°РєРѕРЅС‡РёС‚СЊ СЃРїСЂРёРЅС‚ Р±РµР· РїРµСЂРµРіСЂСѓР·Р°
+          </div>
+          <div className="comment-item">
+            <strong>РЎРёСЃС‚РµРјР°:</strong> Р¤СѓРЅРєС†РёСЏ РєРѕРјРјРµРЅС‚Р°СЂРёРµРІ РїРѕСЏРІРёС‚СЃСЏ РІ СЃР»РµРґСѓСЋС‰РµР№ РІРµСЂСЃРёРё
+          </div>
+        </div>
+        <div className="comment-input-placeholder">
+          <input type="text" placeholder="РќР°РїРёС€РёС‚Рµ РєРѕРјРјРµРЅС‚Р°СЂРёР№... (Р±СѓРґРµС‚ РІ v2.0)" disabled />
+          <button disabled>рџ“¤</button>
+        </div>
+        <div className="comment-note">
+          вљЎ РљРѕРјРјРµРЅС‚Р°СЂРёРё РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ. Р’ СЂРµР»РёР·Рµ Р±СѓРґРµС‚ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РѕР±СЃСѓР¶РґР°С‚СЊ Р·Р°РґР°С‡Рё РІРЅСѓС‚СЂРё РєРѕРјР°РЅРґС‹.
+        </div>
+      </div>
+
+        {showWip && (
+          <div className="learning-panel">
+            <p className="learning-text">рџ’Ў <strong>РљРѕРЅС‚РµРєСЃС‚РЅРѕРµ РѕР±СѓС‡РµРЅРёРµ:</strong> WIP-Р»РёРјРёС‚ = {wipLimit}. РџРѕРїСЂРѕР±СѓР№ РїСЂРµРІС‹СЃРёС‚СЊ Р»РёРјРёС‚ вЂ” РїРµСЂРµС‚Р°С‰Рё Р»РёС€РЅСЋСЋ Р·Р°РґР°С‡Сѓ РІ РєРѕР»РѕРЅРєСѓ В«Р’ СЂР°Р±РѕС‚РµВ».</p>
+          </div>
+        )}
+        {project.quizPassed && (
+          <div className="quiz-badge">
+            <span>рџЏ…</span>
+            <span className="quiz-badge-text">Р—РЅР°С‡РѕРє "Р—РЅР°С‚РѕРє Agile" РїРѕР»СѓС‡РµРЅ!</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\LearningMaterials.jsx =====
+import React, { useState, useEffect } from 'react';
+import Confetti from 'react-confetti';
+
+const modules = [
+  {
+    id: 1,
+    title: 'рџ“ Р§С‚Рѕ С‚Р°РєРѕРµ Agile?',
+    content: 'Agile вЂ” СЌС‚Рѕ РїРѕРґС…РѕРґ Рє СѓРїСЂР°РІР»РµРЅРёСЋ РїСЂРѕРµРєС‚Р°РјРё, РѕСЃРЅРѕРІР°РЅРЅС‹Р№ РЅР° РёС‚РµСЂР°С‚РёРІРЅРѕР№ СЂР°Р·СЂР°Р±РѕС‚РєРµ, РіРёР±РєРѕСЃС‚Рё Рё РїРѕСЃС‚РѕСЏРЅРЅРѕР№ РѕР±СЂР°С‚РЅРѕР№ СЃРІСЏР·Рё. РњР°РЅРёС„РµСЃС‚ Agile Р±С‹Р» РїРѕРґРїРёСЃР°РЅ РІ 2001 РіРѕРґСѓ 17 СЌРєСЃРїРµСЂС‚Р°РјРё.',
+    completed: false
+  },
+  {
+    id: 2,
+    title: 'рџЏѓ Scrum: СЂРѕР»Рё, СЃРѕР±С‹С‚РёСЏ, Р°СЂС‚РµС„Р°РєС‚С‹',
+    content: 'Scrum вЂ” С„СЂРµР№РјРІРѕСЂРє СЃ С„РёРєСЃРёСЂРѕРІР°РЅРЅС‹РјРё СЃРїСЂРёРЅС‚Р°РјРё (1-4 РЅРµРґРµР»Рё). Р РѕР»Рё: Product Owner, Scrum Master, РљРѕРјР°РЅРґР°. РЎРѕР±С‹С‚РёСЏ: Sprint Planning, Daily Standup, Sprint Review, Retrospective.',
+    completed: false
+  },
+  {
+    id: 3,
+    title: 'рџ“‹ Kanban: РІРёР·СѓР°Р»РёР·Р°С†РёСЏ РїРѕС‚РѕРєР°',
+    content: 'Kanban С„РѕРєСѓСЃРёСЂСѓРµС‚СЃСЏ РЅР° РѕРіСЂР°РЅРёС‡РµРЅРёРё РЅРµР·Р°РІРµСЂС€С‘РЅРЅРѕР№ СЂР°Р±РѕС‚С‹ (WIP-Р»РёРјРёС‚С‹). Р“Р»Р°РІРЅРѕРµ вЂ” С‚СЏРЅСѓС‚СЊ Р·Р°РґР°С‡Рё, Р° РЅРµ С‚РѕР»РєР°С‚СЊ. Р”РѕСЃРєР° СЃ РєРѕР»РѕРЅРєР°РјРё: To Do в†’ In Progress в†’ Done.',
+    completed: false
+  },
+  {
+    id: 4,
+    title: 'рџ”„ Scrumban: РіРёР±СЂРёРґРЅС‹Р№ РїРѕРґС…РѕРґ',
+    content: 'Scrumban СЃРѕС‡РµС‚Р°РµС‚ СЂРёС‚Рј СЃРїСЂРёРЅС‚РѕРІ Scrum СЃ WIP-Р»РёРјРёС‚Р°РјРё Kanban. РРґРµР°Р»РµРЅ РґР»СЏ РєРѕРјР°РЅРґ, РєРѕС‚РѕСЂС‹Рј РЅСѓР¶РЅР° СЃС‚СЂСѓРєС‚СѓСЂР°, РЅРѕ РІР°Р¶РЅР° РіРёР±РєРѕСЃС‚СЊ РїРѕС‚РѕРєР° Р·Р°РґР°С‡.',
+    completed: false
+  }
+];
+
+export default function LearningMaterials({ onClose, onCertificateEarned }) {
+  const [learningProgress, setLearningProgress] = useState(() => {
+    const saved = localStorage.getItem('learning_progress');
+    return saved ? JSON.parse(saved) : modules.map(m => ({ ...m, completed: false }));
+  });
+  const [showCertificate, setShowCertificate] = useState(false);
+  const [confettiOpacity, setConfettiOpacity] = useState(1);
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('learning_progress', JSON.stringify(learningProgress));
+  }, [learningProgress]);
+
+  const markCompleted = (id) => {
+    const newProgress = learningProgress.map(m =>
+      m.id === id ? { ...m, completed: !m.completed } : m
+    );
+    setLearningProgress(newProgress);
+    
+    const allCompleted = newProgress.every(m => m.completed);
+    if (allCompleted) {
+      setShowCertificate(true);
+      
+      // РљРѕРЅС„РµС‚С‚Рё СЃ РїР»Р°РІРЅС‹Рј Р·Р°С‚СѓС…Р°РЅРёРµРј
+      setShowConfetti(true);
+      setConfettiOpacity(1);
+      
+      // Р§РµСЂРµР· 4 СЃРµРєСѓРЅРґС‹ РЅР°С‡РёРЅР°РµРј Р·Р°С‚СѓС…Р°РЅРёРµ
+      setTimeout(() => {
+        let opacity = 1;
+        const fadeInterval = setInterval(() => {
+          opacity -= 0.05;
+          setConfettiOpacity(opacity);
+          if (opacity <= 0) {
+            clearInterval(fadeInterval);
+            setShowConfetti(false);
+          }
+        }, 50); // РєР°Р¶РґС‹Рµ 50РјСЃ СѓРјРµРЅСЊС€Р°РµРј РЅР° 0.05 в†’ Р·Р°С‚СѓС…Р°РЅРёРµ 1 СЃРµРєСѓРЅРґСѓ
+      }, 4000);
+      
+      if (!localStorage.getItem('certificate_earned')) {
+        localStorage.setItem('certificate_earned', 'true');
+        if (onCertificateEarned) onCertificateEarned();
+      }
+    } else {
+      setShowCertificate(false);
+    }
+  };
+
+  const completedCount = learningProgress.filter(m => m.completed).length;
+  const progressPercent = Math.floor((completedCount / modules.length) * 100);
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      {showConfetti && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 10000,
+          pointerEvents: 'none',
+          opacity: confettiOpacity,
+          transition: 'opacity 0.05s linear'
+        }}>
+          <Confetti
+            recycle={true}
+            numberOfPieces={350}
+            gravity={0.15}
+            wind={0.02}
+            colors={['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#06b6d4']}
+            tweenDuration={5000}
+          />
+        </div>
+      )}
+      <div className="modal-content learning-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="learning-header">
+          <h2 className="modal-title">рџ“љ РћР±СѓС‡РµРЅРёРµ Agile</h2>
+          <button onClick={onClose} className="learning-close-btn">вњ•</button>
+        </div>
+
+        <div className="learning-progress">
+          <div className="learning-progress-header">
+            <span>рџ“Љ РџСЂРѕРіСЂРµСЃСЃ РѕР±СѓС‡РµРЅРёСЏ</span>
+            <span>{progressPercent}%</span>
+          </div>
+          <div className="progress-bar">
+            <div className="progress-fill" style={{ width: `${progressPercent}%` }}></div>
+          </div>
+        </div>
+
+        {learningProgress.map(module => (
+          <div key={module.id} className={`learning-module ${module.completed ? 'module-completed' : 'module-default'}`}>
+            <div className="module-header">
+              <h3>{module.title}</h3>
+              <button onClick={() => markCompleted(module.id)} className={`module-btn ${module.completed ? 'btn-completed' : 'btn-mark'}`}>
+                {module.completed ? 'вњ… РџСЂРѕР№РґРµРЅРѕ' : 'рџ“– РћС‚РјРµС‚РёС‚СЊ РїСЂРѕР№РґРµРЅРЅС‹Рј'}
+              </button>
+            </div>
+            <p className="module-content">{module.content}</p>
+            
+            <div className="video-funny-permanent">
+              <div className="video-funny-permanent-icon">рџЋҐрџ’Ё</div>
+              <div className="video-funny-permanent-text">
+                <p className="funny-title">рџ“Ў Р’РёРґРµРѕ РІСЂРµРјРµРЅРЅРѕ РЅРµРґРѕСЃС‚СѓРїРЅРѕ</p>
+                <p className="funny-subtitle">РќРѕ С‚С‹ РІСЃС‘ СЂР°РІРЅРѕ РєСЂР°СЃР°РІС‡РёРє, С‡С‚Рѕ СѓС‡РёС€СЊСЃСЏ!</p>
+                <div className="funny-loader"></div>
+                <p className="funny-hint">Р РµРєРѕРјРµРЅРґСѓРµРј РїРѕРёСЃРєР°С‚СЊ С‚РµРјСѓ РЅР° VK Video РёР»Рё Rutube</p>
+              </div>
+            </div>
+            <div className="video-note">
+              рџ“– РР·СѓС‡Рё С‚РµРѕСЂРёСЋ РІС‹С€Рµ Рё РѕС‚РјРµС‚СЊ РјРѕРґСѓР»СЊ РїСЂРѕР№РґРµРЅРЅС‹Рј
+            </div>
+          </div>
+        ))}
+
+        {showCertificate && (
+          <div className="certificate-box certificate-animation">
+            <div className="certificate-icon">рџЋ“вњЁ</div>
+            <h3>РџРѕР·РґСЂР°РІР»СЏРµРј!</h3>
+            <p>Р’С‹ РїРѕР»РЅРѕСЃС‚СЊСЋ РёР·СѓС‡РёР»Рё Agile-РјРµС‚РѕРґРѕР»РѕРіРёРё.</p>
+            <p><strong>Р’С‹РґР°РЅ СЃРµСЂС‚РёС„РёРєР°С‚ "Agile-РІС‹РїСѓСЃРєРЅРёРє"!</strong></p>
+            <p>РќРѕРІРѕРµ РґРѕСЃС‚РёР¶РµРЅРёРµ РїРѕСЏРІРёР»РѕСЃСЊ РІ Р»РёС‡РЅРѕРј РєР°Р±РёРЅРµС‚Рµ рџЏ†</p>
+          </div>
+        )}
+
+        <button onClick={onClose} className="btn-primary learning-close-bottom">Р—Р°РєСЂС‹С‚СЊ</button>
+      </div>
+    </div>
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\LoginScreen.jsx =====
+import React, { useState } from 'react';
+import { verifyUser, saveUser, userExists, login } from '../utils/localStorage';
+
+export default function LoginScreen({ onLogin }) {
+  const [isLogin, setIsLogin] = useState(true);
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    setError('');
+    if (!name.trim()) {
+      setError('Р’РІРµРґРёС‚Рµ РёРјСЏ');
+      return;
+    }
+    if (!password.trim()) {
+      setError('Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ');
+      return;
+    }
+    if (verifyUser(name.trim(), password.trim())) {
+      onLogin(name.trim());
+    } else {
+      setError('РќРµРІРµСЂРЅРѕРµ РёРјСЏ РёР»Рё РїР°СЂРѕР»СЊ');
+    }
+  };
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+    setError('');
+    if (!name.trim()) {
+      setError('Р’РІРµРґРёС‚Рµ РёРјСЏ');
+      return;
+    }
+    if (!password.trim()) {
+      setError('Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('РџР°СЂРѕР»Рё РЅРµ СЃРѕРІРїР°РґР°СЋС‚');
+      return;
+    }
+    if (password.length < 3) {
+      setError('РџР°СЂРѕР»СЊ РјРёРЅРёРјСѓРј 3 СЃРёРјРІРѕР»Р°');
+      return;
+    }
+    if (userExists(name.trim())) {
+      setError('РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚');
+      return;
+    }
+    saveUser({ name: name.trim(), password: password.trim() });
+    onLogin(name.trim());
+  };
+
+  return (
+    <div className="login-container">
+      <div className="login-card">
+        <div className="login-title">рџЋЇ AgileMind</div>
+        <div className="login-subtitle">Agile-СѓРїСЂР°РІР»РµРЅРёРµ РїСЂРѕРµРєС‚Р°РјРё СЃ РІСЃС‚СЂРѕРµРЅРЅС‹Рј РѕР±СѓС‡РµРЅРёРµРј</div>
+
+        <div className="login-tabs">
+          <button className={`login-tab ${isLogin ? 'login-tab-active' : ''}`} onClick={() => { setIsLogin(true); setError(''); }}>Р’С…РѕРґ</button>
+          <button className={`login-tab ${!isLogin ? 'login-tab-active' : ''}`} onClick={() => { setIsLogin(false); setError(''); }}>Р РµРіРёСЃС‚СЂР°С†РёСЏ</button>
+        </div>
+
+        <form onSubmit={isLogin ? handleLogin : handleRegister}>
+          <input type="text" placeholder="РРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ" className="login-input" value={name} onChange={(e) => setName(e.target.value)} />
+
+          <div style={{ position: 'relative' }}>
+            <input type={showPassword ? "text" : "password"} placeholder="РџР°СЂРѕР»СЊ" className="login-input" value={password} onChange={(e) => setPassword(e.target.value)} style={{ paddingRight: '40px' }} />
+            <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '40%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer' }}>{showPassword ? 'рџ™€' : 'рџ‘ЃпёЏ'}</button>
+          </div>
+
+          {!isLogin && (
+            <input type={showPassword ? "text" : "password"} placeholder="РџРѕРґС‚РІРµСЂРґРёС‚Рµ РїР°СЂРѕР»СЊ" className="login-input" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+          )}
+
+          {error && <div className="login-error">{error}</div>}
+
+          <button type="submit" className="login-button">{isLogin ? 'Р’РѕР№С‚Рё' : 'Р—Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ'}</button>
+        </form>
+
+        <div className="login-note">рџ“¦ Р’СЃРµ РґР°РЅРЅС‹Рµ СЃРѕС…СЂР°РЅСЏСЋС‚СЃСЏ РІ Р±СЂР°СѓР·РµСЂРµ</div>
+      </div>
+    </div>
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\Profile.jsx =====
+import React from 'react';
+
+export default function Profile({ user, projects, onClose }) {
+  const totalProjects = projects.length;
+  const totalTasks = projects.reduce((acc, p) => acc + (p.tasks?.length || 0), 0);
+  const completedSprints = projects.filter(p => p.activeSprint === null && p.methodology !== 'Kanban').length;
+  const quizPassedCount = projects.filter(p => p.quizPassed).length;
+  
+  // РџСЂРѕРіСЂРµСЃСЃ РѕР±СѓС‡РµРЅРёСЏ (СЃС‡РёС‚С‹РІР°РµРј Р°РєС‚СѓР°Р»СЊРЅС‹Рµ РґР°РЅРЅС‹Рµ РёР· localStorage)
+  // РџСЂРѕРіСЂРµСЃСЃ РѕР±СѓС‡РµРЅРёСЏ (СЃС‡РёС‚С‹РІР°РµРј Р°РєС‚СѓР°Р»СЊРЅС‹Рµ РґР°РЅРЅС‹Рµ РёР· localStorage)
+  const learningProgressSaved = localStorage.getItem('learning_progress');
+  const learningModules = learningProgressSaved ? JSON.parse(learningProgressSaved) : [];
+  const completedModules = learningModules.filter(m => m.completed).length;
+  const learningProgressPercent = learningModules.length ? Math.floor((completedModules / learningModules.length) * 100) : 0;
+  
+const achievements = [
+  { id: 1, name: 'рџЏ… Р—РЅР°С‚РѕРє Agile', unlocked: quizPassedCount > 0, desc: 'РџСЂРѕР№С‚Рё РєРІРёР· С…РѕС‚СЏ Р±С‹ РІ РѕРґРЅРѕРј РїСЂРѕРµРєС‚Рµ' },
+  { id: 2, name: 'рџљЂ РЎРїСЂРёРЅС‚-РјР°СЃС‚РµСЂ', unlocked: completedSprints >= 3, desc: 'Р—Р°РІРµСЂС€РёС‚СЊ 3 СЃРїСЂРёРЅС‚Р°' },
+  { id: 3, name: 'рџ“‹ WIP-РіСѓСЂСѓ', unlocked: totalProjects >= 2, desc: 'РЎРѕР·РґР°С‚СЊ 2 РїСЂРѕРµРєС‚Р° СЃ WIP-Р»РёРјРёС‚Р°РјРё' },
+  { id: 4, name: 'рџЋЇ РђРєС‚РёРІРЅС‹Р№', unlocked: totalProjects >= 5, desc: 'РЎРѕР·РґР°С‚СЊ 5 РїСЂРѕРµРєС‚РѕРІ' },
+  { id: 5, name: 'рџЋ“ Agile-РІС‹РїСѓСЃРєРЅРёРє', unlocked: localStorage.getItem('certificate_earned') === 'true', desc: 'РџРѕР»РЅРѕСЃС‚СЊСЋ РїСЂРѕР№С‚Рё РѕР±СѓС‡РµРЅРёРµ Agile' },
+  { id: 6, name: 'в­ђ РђР±СЃРѕР»СЋС‚РЅС‹Р№ С‡РµРјРїРёРѕРЅ', unlocked: localStorage.getItem('all_quizzes_completed') === 'true', desc: 'РџСЂРѕР№РґРё РІСЃРµ РєРІРёР·С‹ РЅР° СЃС‚СЂР°РЅРёС†Рµ РєРІРёР·РѕРІ' }
+];
+
+  const unlockedCount = achievements.filter(a => a.unlocked).length;
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div 
+        className="modal-content" 
+        style={{ 
+          maxWidth: '500px', 
+          width: '90%', 
+          maxHeight: '85vh',
+          overflowY: 'auto',
+          position: 'relative',
+          padding: '20px'
+        }} 
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* РљР Р•РЎРўРРљ Р’ РџР РђР’РћРњ Р’Р•Р РҐРќР•Рњ РЈР“Р›РЈ */}
+        <button
+          onClick={onClose}
+          style={{
+            position: 'sticky',
+            top: '0',
+            float: 'right',
+            background: '#ef4444',
+            color: 'white',
+            border: 'none',
+            width: '32px',
+            height: '32px',
+            borderRadius: '8px',
+            fontSize: '18px',
+            cursor: 'pointer',
+            fontWeight: 'bold',
+            marginBottom: '10px'
+          }}
+          onMouseEnter={(e) => e.target.style.background = '#dc2626'}
+          onMouseLeave={(e) => e.target.style.background = '#ef4444'}
+        >
+          вњ•
+        </button>
+        
+        <div style={{ clear: 'both' }}>
+          <div className="profile-user-info">
+            <div className="profile-avatar">рџ‘¤</div>
+            <h3 className="profile-user-name">{user.name}</h3>
+            
+          </div>
+          
+          <div className="profile-stats-grid">
+            <div className="profile-stat-card">
+              <div className="profile-stat-number">{totalProjects}</div>
+              <div className="profile-stat-label">РџСЂРѕРµРєС‚РѕРІ</div>
+            </div>
+            <div className="profile-stat-card">
+              <div className="profile-stat-number">{totalTasks}</div>
+              <div className="profile-stat-label">Р—Р°РґР°С‡</div>
+            </div>
+            <div className="profile-stat-card">
+              <div className="profile-stat-number">{completedSprints}</div>
+              <div className="profile-stat-label">РЎРїСЂРёРЅС‚РѕРІ</div>
+            </div>
+            <div className="profile-stat-card">
+              <div className="profile-stat-number">{quizPassedCount}</div>
+              <div className="profile-stat-label">РљРІРёР·РѕРІ РїСЂРѕР№РґРµРЅРѕ</div>
+            </div>
+          </div>
+          
+          <div className="profile-progress-section">
+            <div className="profile-progress-header">
+                <span className="profile-progress-label">рџ“љ РџСЂРѕРіСЂРµСЃСЃ РѕР±СѓС‡РµРЅРёСЏ</span>
+                <span className="profile-progress-percent">{learningProgressPercent}%</span>
+            </div>
+            <div className="profile-progress-bar">
+                <div className="profile-progress-fill" style={{ width: `${learningProgressPercent}%` }}></div>
+            </div>
+          </div>
+          
+          <div className="profile-achievements">
+            <h3 className="profile-achievements-title">рџЏ† Р”РѕСЃС‚РёР¶РµРЅРёСЏ ({unlockedCount}/{achievements.length})</h3>
+            <div>
+              {achievements.map(a => (
+                <div key={a.id} className={`profile-achievement-item ${a.unlocked ? 'profile-achievement-unlocked' : 'profile-achievement-locked'}`}>
+                  <div className="profile-achievement-icon">{a.name.split(' ')[0]}</div>
+                  <div className="profile-achievement-info">
+                    <div className="profile-achievement-name">{a.name}</div>
+                    <div className="profile-achievement-desc">{a.desc}</div>
+                  </div>
+                  {a.unlocked && <div className="profile-achievement-check">вњ“</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <button onClick={onClose} className="btn-primary profile-close-btn" style={{ marginTop: '16px', width: '100%' }}>Р—Р°РєСЂС‹С‚СЊ</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\ProjectCard.jsx =====
+import React from 'react';
+
+export default function ProjectCard({ project, onOpen, onDelete, onEdit }) {
+  const methodologyIcon = {
+    Scrum: 'рџЏѓ',
+    Kanban: 'рџ“‹',
+    Scrumban: 'рџ”„'
+  };
+
+  return (
+    <div className="project-card">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h3 className="project-name">{project.name}</h3>
+        <button 
+          onClick={() => {
+            const newName = prompt('РќРѕРІРѕРµ РЅР°Р·РІР°РЅРёРµ РїСЂРѕРµРєС‚Р°:', project.name);
+            if (newName && newName.trim()) {
+              onEdit(project.id, newName.trim());
+            }
+          }}
+          style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer', color: '#6b7280' }}
+          title="Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РЅР°Р·РІР°РЅРёРµ"
+        >
+          вњЏпёЏ
+        </button>
+      </div>
+      <div className="project-meta">
+        <span>{methodologyIcon[project.methodology]} {project.methodology}</span>
+        <span>вЂў</span>
+        <span>рџ“… {project.createdAt}</span>
+      </div>
+      <p className="project-stats">рџ“‹ {project.tasks?.length || 0} Р·Р°РґР°С‡</p>
+      <div className="project-actions">
+        <button className="btn-open" onClick={() => onOpen(project)} title={`рџ“Ѓ ${project.name}: ${project.tasks.length} Р·Р°РґР°С‡, РјРµС‚РѕРґРѕР»РѕРіРёСЏ вЂ” ${project.methodology}. РќР°Р¶РјРё В«РћС‚РєСЂС‹С‚СЊВ» РґР»СЏ СЂР°Р±РѕС‚С‹.`}>РћС‚РєСЂС‹С‚СЊ</button>
+        <button className="btn-delete" onClick={() => onDelete(project.id)}>рџ—‘пёЏ</button>
+      </div>
+      {project.quizPassed && (
+        <div className="project-badge">
+          <span>рџЏ…</span>
+          <span>Р—РЅР°С‚РѕРє Agile</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\QuizModal.jsx =====
+import React, { useState } from 'react';
+
+const QUIZ_QUESTIONS = [
+  { text: 'Р§С‚Рѕ С‚Р°РєРѕРµ WIP-Р»РёРјРёС‚?', options: ['РњР°РєСЃРёРјСѓРј Р·Р°РґР°С‡ РІ СЂР°Р±РѕС‚Рµ', 'Р’СЂРµРјСЏ СЃРїСЂРёРЅС‚Р°', 'РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ'], correct: 0 },
+  { text: 'РљР°Рє РєРѕРЅС‚РµРєСЃС‚РЅС‹Рµ РїРѕРґСЃРєР°Р·РєРё РїРѕРјРѕРіР°СЋС‚ Р±РѕСЂРѕС‚СЊСЃСЏ СЃ В«Agile-С‚РµР°С‚СЂРѕРјВ»?', options: ['РЈРІРµР»РёС‡РёРІР°СЋС‚ С‡РёСЃР»Рѕ РІСЃС‚СЂРµС‡', 'РћР±СЉСЏСЃРЅСЏСЋС‚ РїРѕСЃР»РµРґСЃС‚РІРёСЏ РґРµР№СЃС‚РІРёР№', 'РћС‚РєР»СЋС‡Р°СЋС‚ СЃС‚РµРЅРґР°РїС‹'], correct: 1 },
+  { text: 'Р§С‚Рѕ РёР· РїРµСЂРµС‡РёСЃР»РµРЅРЅРѕРіРѕ СЏРІР»СЏРµС‚СЃСЏ РїСЂРёР·РЅР°РєРѕРј В«Agile-С‚РµР°С‚СЂР°В»?', options: ['РћР±СЃСѓР¶РґРµРЅРёРµ СЂРµР°Р»СЊРЅС‹С… РїСЂРѕР±Р»РµРј', 'Р¤РѕСЂРјР°Р»СЊРЅС‹Рµ СЂРµС‚СЂРѕСЃРїРµРєС‚РёРІС‹ Р±РµР· РёР·РјРµРЅРµРЅРёР№', 'Р“РёР±РєРѕРµ РїР»Р°РЅРёСЂРѕРІР°РЅРёРµ'], correct: 1 },
+  { text: 'РџРѕС‡РµРјСѓ РіРёР±СЂРёРґРЅС‹Р№ РїРѕРґС…РѕРґ Scrumban СЌС„С„РµРєС‚РёРІРЅРµРµ?', options: ['РЈР±РёСЂР°РµС‚ РІСЃРµ РІСЃС‚СЂРµС‡Рё', 'РЎРѕС‡РµС‚Р°РµС‚ СЃРїСЂРёРЅС‚С‹ СЃ WIP', 'РЈРІРµР»РёС‡РёРІР°РµС‚ РґРѕРєСѓРјРµРЅС‚Р°С†РёСЋ'], correct: 1 }
+];
+
+export default function QuizModal({ onClose, onSuccess }) {
+  const [answers, setAnswers] = useState({});
+
+  const submitQuiz = () => {
+    let correct = 0;
+    QUIZ_QUESTIONS.forEach((q, i) => {
+      if (parseInt(answers[i]) === q.correct) correct++;
+    });
+    const passed = correct >= 3;
+    if (passed) {
+      alert(`вњ… РџРѕР·РґСЂР°РІР»СЏРµРј! РљРІРёР· РїСЂРѕР№РґРµРЅ (${correct}/4)\nРџРѕР»СѓС‡РµРЅ Р·РЅР°С‡РѕРє "Р—РЅР°С‚РѕРє Agile"!`);
+      if (onSuccess) onSuccess();
+    } else {
+      alert(`вќЊ РљРІРёР· РЅРµ РїСЂРѕР№РґРµРЅ (${correct}/4). РџРѕРїСЂРѕР±СѓР№С‚Рµ РµС‰С‘ СЂР°Р·.`);
+    }
+    onClose();
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" style={{ maxWidth: '500px', width: '90%' }} onClick={(e) => e.stopPropagation()}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <h2 className="modal-title">рџ“ќ РљРІРёР·: Р—РЅР°С‚РѕРє Agile</h2>
+          <button onClick={onClose} className="learning-close-btn">вњ•</button>
+        </div>
+        
+        {QUIZ_QUESTIONS.map((q, idx) => (
+          <div key={idx} style={{ marginBottom: '20px' }}>
+            <p style={{ fontWeight: 'bold', marginBottom: '8px' }}>{idx+1}. {q.text}</p>
+            {q.options.map((opt, oidx) => (
+              <label key={oidx} style={{ display: 'block', marginLeft: '12px', marginBottom: '4px' }}>
+                <input type="radio" name={`q${idx}`} value={oidx} onChange={(e) => setAnswers({...answers, [idx]: parseInt(e.target.value)})} style={{ marginRight: '8px' }} />
+                {opt}
+              </label>
+            ))}
+          </div>
+        ))}
+        
+        <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+          <button onClick={submitQuiz} className="btn-primary" style={{ flex: 1 }}>РџСЂРѕРІРµСЂРёС‚СЊ</button>
+          <button onClick={onClose} className="btn-secondary" style={{ flex: 1 }}>Р—Р°РєСЂС‹С‚СЊ</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\QuizzesPage.jsx =====
+import React, { useState, useEffect } from 'react';
+import Confetti from 'react-confetti';
+
+const QUIZZES = [
+  {
+    id: 'agile_basics',
+    title: 'рџ“ РћСЃРЅРѕРІС‹ Agile',
+    description: 'РџСЂРѕРІРµСЂСЊ Р·РЅР°РЅРёРµ Р±Р°Р·РѕРІС‹С… РїСЂРёРЅС†РёРїРѕРІ Agile Рё РњР°РЅРёС„РµСЃС‚Р°.',
+    questions: [
+      { text: 'Р§С‚Рѕ С‚Р°РєРѕРµ WIP-Р»РёРјРёС‚?', options: ['РњР°РєСЃРёРјСѓРј Р·Р°РґР°С‡ РІ СЂР°Р±РѕС‚Рµ', 'Р’СЂРµРјСЏ СЃРїСЂРёРЅС‚Р°', 'РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ'], correct: 0, hint: 'WIP СЂР°СЃС€РёС„СЂРѕРІС‹РІР°РµС‚СЃСЏ РєР°Рє Work In Progress вЂ” РЅРµР·Р°РІРµСЂС€С‘РЅРЅР°СЏ СЂР°Р±РѕС‚Р°. Р›РёРјРёС‚ РѕРіСЂР°РЅРёС‡РёРІР°РµС‚ РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°СЂР°Р»Р»РµР»СЊРЅС‹С… Р·Р°РґР°С‡.' },
+      { text: 'РљР°Рє РєРѕРЅС‚РµРєСЃС‚РЅС‹Рµ РїРѕРґСЃРєР°Р·РєРё РїРѕРјРѕРіР°СЋС‚ Р±РѕСЂРѕС‚СЊСЃСЏ СЃ В«Agile-С‚РµР°С‚СЂРѕРјВ»?', options: ['РЈРІРµР»РёС‡РёРІР°СЋС‚ С‡РёСЃР»Рѕ РІСЃС‚СЂРµС‡', 'РћР±СЉСЏСЃРЅСЏСЋС‚ РїРѕСЃР»РµРґСЃС‚РІРёСЏ РґРµР№СЃС‚РІРёР№', 'РћС‚РєР»СЋС‡Р°СЋС‚ СЃС‚РµРЅРґР°РїС‹'], correct: 1, hint: 'Agile-С‚РµР°С‚СЂ вЂ” СЌС‚Рѕ С„РѕСЂРјР°Р»СЊРЅРѕРµ РІС‹РїРѕР»РЅРµРЅРёРµ СЂРёС‚СѓР°Р»РѕРІ Р±РµР· РїРѕРЅРёРјР°РЅРёСЏ. РџРѕРґСЃРєР°Р·РєРё РѕР±СЉСЏСЃРЅСЏСЋС‚ РџРћР§Р•РњРЈ РЅРµР»СЊР·СЏ РїСЂРµРІС‹С€Р°С‚СЊ Р»РёРјРёС‚.' },
+      { text: 'Р§С‚Рѕ РёР· РїРµСЂРµС‡РёСЃР»РµРЅРЅРѕРіРѕ СЏРІР»СЏРµС‚СЃСЏ РїСЂРёР·РЅР°РєРѕРј В«Agile-С‚РµР°С‚СЂР°В»?', options: ['РћР±СЃСѓР¶РґРµРЅРёРµ СЂРµР°Р»СЊРЅС‹С… РїСЂРѕР±Р»РµРј', 'Р¤РѕСЂРјР°Р»СЊРЅС‹Рµ СЂРµС‚СЂРѕСЃРїРµРєС‚РёРІС‹ Р±РµР· РёР·РјРµРЅРµРЅРёР№', 'Р“РёР±РєРѕРµ РїР»Р°РЅРёСЂРѕРІР°РЅРёРµ'], correct: 1, hint: 'Р•СЃР»Рё СЂРµС‚СЂРѕСЃРїРµРєС‚РёРІС‹ РїСЂРѕРІРѕРґСЏС‚СЃСЏ, РЅРѕ РІС‹РІРѕРґС‹ РЅРµ РїСЂРёРјРµРЅСЏСЋС‚СЃСЏ вЂ” СЌС‚Рѕ С‡РёСЃС‚С‹Р№ С‚РµР°С‚СЂ.' }
+    ],
+    passingScore: 2,
+    achievement: 'quiz_basics_passed'
+  },
+  {
+    id: 'agile_advanced',
+    title: 'рџЏ† РџСЂРѕРґРІРёРЅСѓС‚С‹Р№ Agile',
+    description: 'РџСЂРѕРІРµСЂСЊ Р·РЅР°РЅРёРµ РіРёР±СЂРёРґРЅС‹С… РјРµС‚РѕРґРѕР»РѕРіРёР№ Рё РїСЂРѕРґРІРёРЅСѓС‚С‹С… РєРѕРЅС†РµРїС†РёР№.',
+    questions: [
+      { text: 'РџРѕС‡РµРјСѓ РіРёР±СЂРёРґРЅС‹Р№ РїРѕРґС…РѕРґ Scrumban СЌС„С„РµРєС‚РёРІРЅРµРµ?', options: ['РЈР±РёСЂР°РµС‚ РІСЃРµ РІСЃС‚СЂРµС‡Рё', 'РЎРѕС‡РµС‚Р°РµС‚ СЃРїСЂРёРЅС‚С‹ СЃ WIP', 'РЈРІРµР»РёС‡РёРІР°РµС‚ РґРѕРєСѓРјРµРЅС‚Р°С†РёСЋ'], correct: 1, hint: 'Scrumban Р±РµСЂС‘С‚ Р»СѓС‡С€РµРµ РёР· Scrum (СЂРёС‚Рј СЃРїСЂРёРЅС‚РѕРІ) Рё Kanban (WIP-Р»РёРјРёС‚С‹).' },
+      { text: 'Р§С‚Рѕ С‚Р°РєРѕРµ story points?', options: ['РћС†РµРЅРєР° СЃР»РѕР¶РЅРѕСЃС‚Рё Р·Р°РґР°С‡Рё', 'Р’СЂРµРјСЏ РІ С‡Р°СЃР°С…', 'РљРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚СЂРѕРє РєРѕРґР°'], correct: 0, hint: 'Story points вЂ” РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅР°СЏ РѕС†РµРЅРєР° СЃР»РѕР¶РЅРѕСЃС‚Рё, Р° РЅРµ РІСЂРµРјСЏ РІ С‡Р°СЃР°С….' },
+      { text: 'РљР°Рє С‡Р°СЃС‚Рѕ РїСЂРѕРІРѕРґРёС‚СЃСЏ СЂРµС‚СЂРѕСЃРїРµРєС‚РёРІР° РІ Scrum?', options: ['РџРѕСЃР»Рµ РєР°Р¶РґРѕРіРѕ СЃРїСЂРёРЅС‚Р°', 'Р Р°Р· РІ РјРµСЃСЏС†', 'Р’ РєРѕРЅС†Рµ РїСЂРѕРµРєС‚Р°'], correct: 0, hint: 'Р РµС‚СЂРѕСЃРїРµРєС‚РёРІР° вЂ” РєР»СЋС‡РµРІРѕРµ СЃРѕР±С‹С‚РёРµ Scrum, РїСЂРѕРІРѕРґРёС‚СЃСЏ РїРѕСЃР»Рµ РєР°Р¶РґРѕРіРѕ СЃРїСЂРёРЅС‚Р°.' }
+    ],
+    passingScore: 2,
+    achievement: 'quiz_advanced_passed'
+  },
+  {
+    id: 'agile_expert',
+    title: 'рџЋ“ Agile-СЌРєСЃРїРµСЂС‚',
+    description: 'Р¤РёРЅР°Р»СЊРЅС‹Р№ РєРІРёР· РґР»СЏ РЅР°СЃС‚РѕСЏС‰РёС… СЌРєСЃРїРµСЂС‚РѕРІ!',
+    questions: [
+      { text: 'Р§С‚Рѕ РѕР·РЅР°С‡Р°РµС‚ С‚РµСЂРјРёРЅ "РёРЅРєСЂРµРјРµРЅС‚" РІ Scrum?', options: ['Р Р°Р±РѕС‚Р°СЋС‰РёР№ РїСЂРѕРґСѓРєС‚ РїРѕСЃР»Рµ СЃРїСЂРёРЅС‚Р°', 'РџР»Р°РЅ РЅР° СЃР»РµРґСѓСЋС‰РёР№ СЃРїСЂРёРЅС‚', 'РЎРїРёСЃРѕРє Р·Р°РґР°С‡'], correct: 0, hint: 'РРЅРєСЂРµРјРµРЅС‚ вЂ” СЌС‚Рѕ СЂР°Р±РѕС‚Р°СЋС‰Р°СЏ РІРµСЂСЃРёСЏ РїСЂРѕРґСѓРєС‚Р°, РєРѕС‚РѕСЂСѓСЋ РєРѕРјР°РЅРґР° РѕР±РµС‰Р°РµС‚ РґРѕСЃС‚Р°РІРёС‚СЊ РІ РєРѕРЅС†Рµ СЃРїСЂРёРЅС‚Р°.' },
+      { text: 'Р§С‚Рѕ РґРµР»Р°РµС‚ Scrum Master?', options: ['РЈРїСЂР°РІР»СЏРµС‚ Р±СЋРґР¶РµС‚РѕРј', 'РЈР±РёСЂР°РµС‚ РїСЂРµРїСЏС‚СЃС‚РІРёСЏ Рё РЅР°Р»Р°Р¶РёРІР°РµС‚ РїСЂРѕС†РµСЃСЃС‹', 'РџРёС€РµС‚ РєРѕРґ'], correct: 1, hint: 'Scrum Master вЂ” СЌС‚Рѕ servant leader, РєРѕС‚РѕСЂС‹Р№ РїРѕРјРѕРіР°РµС‚ РєРѕРјР°РЅРґРµ СЃР»РµРґРѕРІР°С‚СЊ РїСЂРѕС†РµСЃСЃСѓ Рё СѓР±РёСЂР°РµС‚ Р±Р»РѕРєРµСЂС‹.' },
+      { text: 'РљР°РєРѕР№ С„СЂРµР№РјРІРѕСЂРє РёСЃРїРѕР»СЊР·СѓРµС‚ WIP-Р»РёРјРёС‚С‹?', options: ['Scrum', 'Kanban', 'Waterfall'], correct: 1, hint: 'WIP-Р»РёРјРёС‚С‹ вЂ” РѕСЃРЅРѕРІР° Kanban, РѕРЅРё РѕРіСЂР°РЅРёС‡РёРІР°СЋС‚ РєРѕР»РёС‡РµСЃС‚РІРѕ РЅРµР·Р°РІРµСЂС€С‘РЅРЅС‹С… Р·Р°РґР°С‡.' },
+      { text: 'Р§С‚Рѕ С‚Р°РєРѕРµ Р±СЌРєР»РѕРі?', options: ['РЎРїРёСЃРѕРє РїСЂРёРѕСЂРёС‚РµС‚РЅС‹С… Р·Р°РґР°С‡ РґР»СЏ СЂР°Р·СЂР°Р±РѕС‚РєРё', 'РћС‚С‡С‘С‚ Рѕ СЃРїСЂРёРЅС‚Рµ', 'Р•Р¶РµРґРЅРµРІРЅР°СЏ РІСЃС‚СЂРµС‡Р°'], correct: 0, hint: 'Р‘СЌРєР»РѕРі вЂ” СЌС‚Рѕ СЃРїРёСЃРѕРє РІСЃРµС… Р·Р°РґР°С‡, РєРѕС‚РѕСЂС‹Рµ РЅСѓР¶РЅРѕ СЃРґРµР»Р°С‚СЊ, РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅС‹Р№ РїРѕ РїСЂРёРѕСЂРёС‚РµС‚Сѓ.' }
+    ],
+    passingScore: 3,
+    achievement: 'quiz_expert_passed'
+  }
+];
+
+export default function QuizzesPage({ onBack }) {
+  const [selectedQuiz, setSelectedQuiz] = useState(null);
+  const [answers, setAnswers] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+  const [score, setScore] = useState(0);
+  const [showHint, setShowHint] = useState({});
+  const [quizStatus, setQuizStatus] = useState(() => {
+    const saved = {};
+    QUIZZES.forEach(q => {
+      saved[q.id] = localStorage.getItem(q.achievement) === 'true';
+    });
+    return saved;
+  });
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  const markComplete = (quizId) => {
+    setQuizStatus(prev => ({ ...prev, [quizId]: true }));
+  };
+
+  const allCompleted = Object.values(quizStatus).every(v => v === true);
+  const allCompletedBefore = localStorage.getItem('all_quizzes_completed') === 'true';
+
+  useEffect(() => {
+    if (allCompleted && !allCompletedBefore) {
+      setShowConfetti(true);
+      localStorage.setItem('all_quizzes_completed', 'true');
+      setTimeout(() => setShowConfetti(false), 5000);
+    }
+  }, [allCompleted, allCompletedBefore]);
+
+  const toggleHint = (idx) => {
+    setShowHint(prev => ({ ...prev, [idx]: !prev[idx] }));
+  };
+
+  const submitQuiz = () => {
+    let correct = 0;
+    selectedQuiz.questions.forEach((q, i) => {
+      if (parseInt(answers[i]) === q.correct) correct++;
+    });
+    setScore(correct);
+    setSubmitted(true);
+    const passed = correct >= selectedQuiz.passingScore;
+    if (passed) {
+      localStorage.setItem(selectedQuiz.achievement, 'true');
+      markComplete(selectedQuiz.id);
+    }
+  };
+
+  const resetQuiz = () => {
+    setSelectedQuiz(null);
+    setAnswers({});
+    setSubmitted(false);
+    setShowHint({});
+  };
+
+  if (selectedQuiz && !submitted) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#f3f4f6', padding: '24px' }}>
+        <div style={{ maxWidth: '700px', margin: '0 auto', background: 'white', borderRadius: '24px', padding: '24px' }}>
+          <button onClick={resetQuiz} style={{ background: 'none', border: 'none', color: '#4f46e5', cursor: 'pointer', marginBottom: '16px' }}>в†ђ Рљ СЃРїРёСЃРєСѓ РєРІРёР·РѕРІ</button>
+          <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>{selectedQuiz.title}</h2>
+          <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '20px' }}>Р”Р»СЏ РїСЂРѕС…РѕР¶РґРµРЅРёСЏ РЅСѓР¶РЅРѕ {selectedQuiz.passingScore} РїСЂР°РІРёР»СЊРЅС‹С… РѕС‚РІРµС‚Р° РёР· {selectedQuiz.questions.length}</p>
+          
+          {selectedQuiz.questions.map((q, idx) => {
+            const selectedAnswer = answers[idx];
+            const isCorrect = selectedAnswer !== undefined && selectedAnswer === q.correct;
+            const isWrong = selectedAnswer !== undefined && selectedAnswer !== q.correct;
+            
+            return (
+              <div key={idx} style={{ 
+                marginBottom: '16px', 
+                padding: '16px', 
+                background: isWrong ? '#fee2e2' : isCorrect ? '#d1fae5' : '#f9fafb', 
+                borderRadius: '12px',
+                borderLeft: isWrong ? '4px solid #ef4444' : isCorrect ? '4px solid #10b981' : 'none'
+              }}>
+                <p style={{ fontWeight: 'bold', marginBottom: '10px' }}>{idx+1}. {q.text}</p>
+                {q.options.map((opt, oidx) => (
+                  <label key={oidx} style={{ display: 'block', marginLeft: '12px', marginBottom: '8px', cursor: 'pointer', padding: '4px 0' }}>
+                    <input 
+                      type="radio" 
+                      name={`q${idx}`} 
+                      value={oidx} 
+                      onChange={(e) => setAnswers({...answers, [idx]: parseInt(e.target.value)})}
+                      checked={answers[idx] === oidx}
+                      style={{ marginRight: '8px' }} 
+                    />
+                    <span style={{ 
+                      color: answers[idx] === oidx && oidx === q.correct ? '#10b981' : 
+                             answers[idx] === oidx && oidx !== q.correct ? '#dc2626' : '#374151',
+                      fontWeight: answers[idx] === oidx && oidx === q.correct ? 'bold' : 'normal'
+                    }}>
+                      {opt}
+                      {answers[idx] === oidx && oidx === q.correct && ' вњ“'}
+                      {answers[idx] === oidx && oidx !== q.correct && ' вњ—'}
+                    </span>
+                  </label>
+                ))}
+                
+                {isWrong && (
+                  <div style={{ marginTop: '12px', padding: '12px', background: '#fef3c7', borderRadius: '8px' }}>
+                    <p style={{ fontWeight: 'bold', color: '#92400e', marginBottom: '4px' }}>рџ“– РџРѕРґСЃРєР°Р·РєР°:</p>
+                    <p style={{ fontSize: '13px', color: '#78350f' }}>{q.hint}</p>
+                    <p style={{ fontSize: '12px', color: '#10b981', marginTop: '8px' }}>вњ… РџСЂР°РІРёР»СЊРЅС‹Р№ РѕС‚РІРµС‚: {q.options[q.correct]}</p>
+                  </div>
+                )}
+                
+                {!isWrong && !isCorrect && (
+                  <button 
+                    onClick={() => toggleHint(idx)}
+                    style={{ marginTop: '8px', fontSize: '12px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'none' }}
+                  >
+                    {showHint[idx] ? 'РЎРєСЂС‹С‚СЊ РїРѕРґСЃРєР°Р·РєСѓ' : 'рџ’Ў РџРѕРєР°Р·Р°С‚СЊ РїРѕРґСЃРєР°Р·РєСѓ'}
+                  </button>
+                )}
+                
+                {showHint[idx] && !isWrong && !isCorrect && (
+                  <div style={{ marginTop: '8px', padding: '8px 12px', background: '#eff6ff', borderRadius: '8px', fontSize: '12px', color: '#1e40af' }}>
+                    {q.hint}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          
+          <button 
+            onClick={submitQuiz} 
+            style={{ width: '100%', padding: '12px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', marginTop: '16px' }}
+          >
+            Р—Р°РІРµСЂС€РёС‚СЊ РєРІРёР·
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (selectedQuiz && submitted) {
+    const passed = score >= selectedQuiz.passingScore;
+    return (
+      <div style={{ minHeight: '100vh', background: '#f3f4f6', padding: '24px' }}>
+        <div style={{ maxWidth: '500px', margin: '0 auto', background: 'white', borderRadius: '24px', padding: '32px', textAlign: 'center' }}>
+          <div style={{ fontSize: '64px', marginBottom: '16px' }}>{passed ? 'рџЏ†' : 'рџ“љ'}</div>
+          <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>{passed ? 'РџРѕР·РґСЂР°РІР»СЏРµРј!' : 'РџРѕРїСЂРѕР±СѓР№С‚Рµ РµС‰С‘ СЂР°Р·'}</h2>
+          <p style={{ margin: '16px 0' }}>РџСЂР°РІРёР»СЊРЅС‹С… РѕС‚РІРµС‚РѕРІ: {score} РёР· {selectedQuiz.questions.length}</p>
+          {!passed && <p style={{ fontSize: '13px', color: '#6b7280' }}>РСЃРїРѕР»СЊР·СѓР№С‚Рµ РїРѕРґСЃРєР°Р·РєРё, С‡С‚РѕР±С‹ СѓР·РЅР°С‚СЊ РїСЂР°РІРёР»СЊРЅС‹Рµ РѕС‚РІРµС‚С‹!</p>}
+          {passed && <p style={{ background: '#fef3c7', padding: '12px', borderRadius: '12px' }}>рџЏ… РџРѕР»СѓС‡РµРЅРѕ РґРѕСЃС‚РёР¶РµРЅРёРµ "{selectedQuiz.title}"!</p>}
+          <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+            <button onClick={resetQuiz} style={{ flex: 1, padding: '12px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>Р—Р°РєСЂС‹С‚СЊ</button>
+            <button onClick={() => { resetQuiz(); setSelectedQuiz(null); }} style={{ flex: 1, padding: '12px', background: '#e5e7eb', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>Рљ СЃРїРёСЃРєСѓ</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#f3f4f6', padding: '24px' }}>
+      {showConfetti && <Confetti recycle={false} numberOfPieces={300} gravity={0.15} />}
+      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        <button onClick={onBack} style={{ background: 'none', border: 'none', color: '#4f46e5', cursor: 'pointer', marginBottom: '16px' }}>в†ђ РќР° РіР»Р°РІРЅСѓСЋ</button>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <h1 style={{ fontSize: '32px', fontWeight: 'bold' }}>рџЏ… РљРІРёР·С‹ РїРѕ Agile</h1>
+          <p>РџСЂРѕР№РґРё РІСЃРµ РєРІРёР·С‹ Рё РїРѕР»СѓС‡Рё РґРѕСЃС‚РёР¶РµРЅРёРµ В«РђР±СЃРѕР»СЋС‚РЅС‹Р№ С‡РµРјРїРёРѕРЅВ»!</p>
+          {allCompleted && <div style={{ background: 'linear-gradient(135deg, #fef3c7, #fde68a)', borderRadius: '16px', padding: '16px', marginTop: '20px', fontWeight: 'bold' }}>рџ‘‘ Р’СЃРµ РєРІРёР·С‹ РїСЂРѕР№РґРµРЅС‹! РўС‹ С‡РµРјРїРёРѕРЅ! рџ‘‘</div>}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
+          {QUIZZES.map(quiz => {
+            const isCompleted = quizStatus[quiz.id];
+            return (
+              <div key={quiz.id} style={{ background: isCompleted ? 'linear-gradient(135deg, #ecfdf5, #d1fae5)' : 'white', borderRadius: '20px', padding: '24px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                <div style={{ fontSize: '48px', marginBottom: '12px' }}>{isCompleted ? 'вњ…' : 'рџ“ќ'}</div>
+                <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '8px' }}>{quiz.title}</h3>
+                <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '20px' }}>{quiz.description}</p>
+                <button onClick={() => setSelectedQuiz(quiz)} style={{ padding: '10px 20px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                  {isCompleted ? 'РџСЂРѕР№С‚Рё РµС‰С‘ СЂР°Р·' : 'РќР°С‡Р°С‚СЊ РєРІРёР·'}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\SprintBlock.jsx =====
+import React, { useState, useEffect } from 'react';
+
+export default function SprintBlock({ project, onCompleteSprint }) {
+  const [sprint, setSprint] = useState(project.activeSprint || null);
+  const [showForm, setShowForm] = useState(false);
+  const [name, setName] = useState('');
+  const [weeks, setWeeks] = useState(2);
+  const [timeLeft, setTimeLeft] = useState(null);
+  const [showRetro, setShowRetro] = useState(false);
+  const [retroFeedback, setRetroFeedback] = useState({ good: '', bad: '', improve: '' });
+
+  useEffect(() => {
+    if (sprint?.endDate) {
+      const timer = setInterval(() => {
+        const end = new Date(sprint.endDate);
+        const diff = end - new Date();
+        if (diff <= 0) {
+          setTimeLeft({ days: 0, hours: 0, minutes: 0 });
+          clearInterval(timer);
+        } else {
+          setTimeLeft({
+            days: Math.floor(diff / 86400000),
+            hours: Math.floor((diff % 86400000) / 3600000),
+            minutes: Math.floor((diff % 3600000) / 60000)
+          });
+        }
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [sprint]);
+
+  const createSprint = () => {
+    if (!name.trim()) return;
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + weeks * 7);
+    const newSprint = {
+      id: Date.now(),
+      name: name.trim(),
+      weeks,
+      endDate: endDate.toISOString()
+    };
+    setSprint(newSprint);
+    setShowForm(false);
+    setName('');
+    if (onCompleteSprint) onCompleteSprint({ ...project, activeSprint: newSprint });
+  };
+const completeSprint = () => {
+  if (window.confirm('Р—Р°РІРµСЂС€РёС‚СЊ СЃРїСЂРёРЅС‚?')) {
+    setSprint(null);
+    if (onCompleteSprint) {
+      onCompleteSprint({ ...project, activeSprint: null });
+    }
+  }
+};
+
+  if (project.methodology === 'Kanban') return null;
+
+  if (!sprint && !showForm) {
+    return (
+      <div className="sprint-empty">
+        <p className="sprint-empty-text">РќРµС‚ Р°РєС‚РёРІРЅРѕРіРѕ СЃРїСЂРёРЅС‚Р°</p>
+        <button className="btn-primary" onClick={() => setShowForm(true)} title="рџ“… РЎРѕР·РґР°С‚СЊ СЃРїСЂРёРЅС‚ РЅР° 1-4 РЅРµРґРµР»Рё. РЎРїСЂРёРЅС‚ РґР°С‘С‚ СЂРёС‚Рј Рё С„РѕРєСѓСЃ РєРѕРјР°РЅРґРµ.">
+          + РЎРѕР·РґР°С‚СЊ СЃРїСЂРёРЅС‚
+        </button>
+      </div>
+    );
+  }
+
+  if (showForm) {
+    return (
+      <div className="sprint-form">
+        <h3 className="sprint-form-title">рџ“… РЎРѕР·РґР°С‚СЊ СЃРїСЂРёРЅС‚</h3>
+        <input
+          type="text"
+          placeholder="РќР°Р·РІР°РЅРёРµ СЃРїСЂРёРЅС‚Р°"
+          className="sprint-input"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <select
+          className="sprint-select"
+          value={weeks}
+          onChange={(e) => setWeeks(parseInt(e.target.value))}
+        >
+          <option value="1">1 РЅРµРґРµР»СЏ</option>
+          <option value="2">2 РЅРµРґРµР»Рё</option>
+          <option value="3">3 РЅРµРґРµР»Рё</option>
+          <option value="4">4 РЅРµРґРµР»Рё</option>
+        </select>
+        <div className="modal-buttons">
+          <button className="btn-primary" onClick={createSprint}>РЎРѕР·РґР°С‚СЊ</button>
+          <button className="btn-secondary" onClick={() => setShowForm(false)}>РћС‚РјРµРЅР°</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="sprint-active">
+      <div className="sprint-active-content">
+        <div>
+          <h3 className="sprint-name">рџЏѓ {sprint.name}</h3>
+          <p className="sprint-timer">{sprint.weeks} РЅРµРґ.</p>
+        </div>
+        {timeLeft && (
+          <div className="sprint-timer">
+            {timeLeft.days}Рґ {timeLeft.hours}С‡ {timeLeft.minutes}Рј
+          </div>
+        )}
+        <button className="btn-complete-sprint" onClick={completeSprint} title="вњ… Р—Р°РІРµСЂС€РёС‚СЊ С‚РµРєСѓС‰РёР№ СЃРїСЂРёРЅС‚. РќРµР·Р°РІРµСЂС€С‘РЅРЅС‹Рµ Р·Р°РґР°С‡Рё РѕСЃС‚Р°РЅСѓС‚СЃСЏ РЅР° РґРѕСЃРєРµ.">
+          вњ… Р—Р°РІРµСЂС€РёС‚СЊ СЃРїСЂРёРЅС‚
+        </button>
+        
+      </div>
+      
+    </div>
+
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\TaskCard.jsx =====
+import React from 'react';
+
+export default function TaskCard({ task, onDelete, onEdit, isDraggable = true }) {
+  const priorityColors = {
+    Low: 'border-l-green-500',
+    Medium: 'border-l-yellow-500',
+    High: 'border-l-red-500'
+  };
+
+  return (
+    <div
+      className={`task-card ${priorityColors[task.priority] || 'border-l-indigo-500'}`}
+      draggable={isDraggable}
+      onDragStart={(e) => {
+        if (isDraggable) {
+          e.dataTransfer.setData('taskId', task.id);
+          e.target.style.opacity = '0.5';
+        }
+      }}
+      onDragEnd={(e) => e.target.style.opacity = '1'}
+    >
+      <div className="task-card-content">
+        <div style={{ flex: 1, cursor: 'pointer' }} onClick={() => onEdit(task)}>
+          <div className="task-title">{task.title}</div>
+          {task.description && (
+            <div className="task-description">{task.description}</div>
+          )}
+        </div>
+        <button className="task-delete" onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}>вњ•</button>
+      </div>
+    </div>
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\TaskModal.jsx =====
+import React, { useState } from 'react';
+
+export default function TaskModal({ task, onSave, onClose }) {
+  const [title, setTitle] = useState(task?.title || '');
+  const [description, setDescription] = useState(task?.description || '');
+  const [priority, setPriority] = useState(task?.priority || 'Medium');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (title.trim()) {
+      onSave({ 
+        id: task?.id,
+        title: title.trim(), 
+        description: description.trim(), 
+        priority 
+      });
+      onClose();
+    }
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <h2 className="modal-title">{task ? 'вњЏпёЏ Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ' : 'вћ• РќРѕРІР°СЏ Р·Р°РґР°С‡Р°'}</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="РќР°Р·РІР°РЅРёРµ Р·Р°РґР°С‡Рё"
+            className="modal-input"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            autoFocus
+          />
+          <textarea
+            placeholder="РћРїРёСЃР°РЅРёРµ (РЅРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕ)"
+            className="modal-input"
+            rows="3"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            style={{ resize: 'vertical' }}
+          />
+          <select
+            className="modal-select"
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+          >
+            <option value="Low">рџџў РќРёР·РєРёР№ РїСЂРёРѕСЂРёС‚РµС‚</option>
+            <option value="Medium">рџџЎ РЎСЂРµРґРЅРёР№ РїСЂРёРѕСЂРёС‚РµС‚</option>
+            <option value="High">рџ”ґ Р’С‹СЃРѕРєРёР№ РїСЂРёРѕСЂРёС‚РµС‚</option>
+          </select>
+          <div className="modal-buttons">
+            <button type="submit" className="btn-primary">РЎРѕС…СЂР°РЅРёС‚СЊ</button>
+            <button type="button" className="btn-secondary" onClick={onClose}>РћС‚РјРµРЅР°</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\TeamPage.jsx =====
+import React from 'react';
+
+export default function TeamPage({ onBack }) {
+  return (
+    <div className="team-page">
+      <button className="back-link" onClick={onBack}>в†ђ РќР° РіР»Р°РІРЅСѓСЋ</button>
+      
+      <h1 className="team-title">рџ‘Ґ РљРѕРјР°РЅРґР° AgileMind</h1>
+      <p className="team-subtitle">Agile-СЂРёС‚СѓР°Р»С‹ Рё РєРѕРјР°РЅРґРЅС‹Рµ РїСЂР°РєС‚РёРєРё</p>
+
+      {/* РЎС‚РµРЅРґР°Рї */}
+      <div className="team-card standup-card">
+        <div className="team-card-icon">вЂпёЏ</div>
+        <div className="team-card-content">
+          <h3>Р•Р¶РµРґРЅРµРІРЅС‹Р№ СЃС‚РµРЅРґР°Рї (Daily Scrum)</h3>
+          <p>15 РјРёРЅСѓС‚, РѕС‚РІРµС‚С‹ РЅР° 3 РІРѕРїСЂРѕСЃР°:</p>
+          <ul>
+            <li>вњ… <strong>Р§С‚Рѕ СЃРґРµР»Р°Р» РІС‡РµСЂР°?</strong> вЂ” С‡С‚Рѕ СѓРґР°Р»РѕСЃСЊ Р·Р°РІРµСЂС€РёС‚СЊ</li>
+            <li>рџ”„ <strong>Р§С‚Рѕ СЃРґРµР»Р°СЋ СЃРµРіРѕРґРЅСЏ?</strong> вЂ” РїР»Р°РЅ РЅР° РґРµРЅСЊ</li>
+            <li>вљ пёЏ <strong>РљР°РєРёРµ РїСЂРѕР±Р»РµРјС‹?</strong> вЂ” Р±Р»РѕРєРµСЂС‹ Рё РїРѕРјРѕС‰СЊ</li>
+          </ul>
+          <button className="btn-secondary disabled" disabled>вћ• Р”РѕР±Р°РІРёС‚СЊ РѕС‚С‡С‘С‚ (Р±СѓРґРµС‚ РІ v2.0)</button>
+        </div>
+      </div>
+
+      {/* Р РµС‚СЂРѕСЃРїРµРєС‚РёРІР° */}
+      <div className="team-card retro-card">
+        <div className="team-card-icon">рџ“ќ</div>
+        <div className="team-card-content">
+          <h3>Р РµС‚СЂРѕСЃРїРµРєС‚РёРІР° СЃРїСЂРёРЅС‚Р°</h3>
+          <p>Р’СЃС‚СЂРµС‡Р° РїРѕСЃР»Рµ Р·Р°РІРµСЂС€РµРЅРёСЏ СЃРїСЂРёРЅС‚Р° РґР»СЏ СѓР»СѓС‡С€РµРЅРёСЏ РїСЂРѕС†РµСЃСЃРѕРІ:</p>
+          <ul>
+            <li>рџџў <strong>Р§С‚Рѕ РїСЂРѕС€Р»Рѕ С…РѕСЂРѕС€Рѕ?</strong> вЂ” СѓСЃРїРµС…Рё Рё СѓРґР°С‡РЅС‹Рµ РїСЂР°РєС‚РёРєРё</li>
+            <li>рџ”ґ <strong>Р§С‚Рѕ Р±С‹Р»Рѕ РїР»РѕС…Рѕ?</strong> вЂ” РїСЂРѕР±Р»РµРјС‹ Рё РЅРµСѓРґР°С‡Рё</li>
+            <li>рџџЎ <strong>Р§С‚Рѕ СѓР»СѓС‡С€РёС‚СЊ?</strong> вЂ” РёРґРµРё Рё СЌРєСЃРїРµСЂРёРјРµРЅС‚С‹</li>
+          </ul>
+          <button className="btn-secondary disabled" disabled>вћ• РџСЂРѕРІРµСЃС‚Рё СЂРµС‚СЂРѕ (Р±СѓРґРµС‚ РІ v2.0)</button>
+        </div>
+      </div>
+
+      {/* Р¦РµР»СЊ СЃРїСЂРёРЅС‚Р° */}
+      <div className="team-card goal-card">
+        <div className="team-card-icon">рџЋЇ</div>
+        <div className="team-card-content">
+          <h3>Р¦РµР»СЊ С‚РµРєСѓС‰РµРіРѕ СЃРїСЂРёРЅС‚Р°</h3>
+          <p>РљСЂР°С‚РєР°СЏ С„РѕСЂРјСѓР»РёСЂРѕРІРєР° С‚РѕРіРѕ, Р·Р°С‡РµРј РЅСѓР¶РµРЅ СЃРїСЂРёРЅС‚.</p>
+          <div className="goal-placeholder">
+            <em>РџСЂРёРјРµСЂ: В«Р—Р°РІРµСЂС€РёС‚СЊ РЅР°СЃС‚СЂРѕР№РєСѓ WIP-Р»РёРјРёС‚РѕРІ Рё РїСЂРѕС‚РµСЃС‚РёСЂРѕРІР°С‚СЊ РїРѕРґСЃРєР°Р·РєРёВ»</em>
+          </div>
+          <button className="btn-secondary disabled" disabled>вњЏпёЏ Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ (Р±СѓРґРµС‚ РІ v2.0)</button>
+        </div>
+      </div>
+
+      {/* РќР°РїРѕРјРёРЅР°Р»РєР° */}
+      <div className="team-card reminder-card">
+        <div className="team-card-icon">рџ’Ў</div>
+        <div className="team-card-content">
+          <h3>Р—Р°С‡РµРј СЌС‚Рѕ РІСЃС‘?</h3>
+          <p>
+            <strong>Р•Р¶РµРґРЅРµРІРЅС‹Р№ СЃС‚РµРЅРґР°Рї</strong> вЂ” СЃРёРЅС…СЂРѕРЅРёР·Р°С†РёСЏ РєРѕРјР°РЅРґС‹, РІС‹СЏРІР»РµРЅРёРµ РїСЂРѕР±Р»РµРј.<br/>
+            <strong>Р РµС‚СЂРѕСЃРїРµРєС‚РёРІР°</strong> вЂ” РїРѕСЃС‚РѕСЏРЅРЅРѕРµ СѓР»СѓС‡С€РµРЅРёРµ РїСЂРѕС†РµСЃСЃРѕРІ, Р±РѕСЂСЊР±Р° СЃ В«Agile-С‚РµР°С‚СЂРѕРјВ».<br/>
+            <strong>Р¦РµР»СЊ СЃРїСЂРёРЅС‚Р°</strong> вЂ” С„РѕРєСѓСЃ РєРѕРјР°РЅРґС‹ РЅР° СЂРµР·СѓР»СЊС‚Р°С‚Рµ, Р° РЅРµ РЅР° Р·Р°РґР°С‡Р°С….
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\components\WipLimitInput.jsx =====
+import React from 'react';
+
+export default function WipLimitInput({ value, onChange, tasksCount, isOver }) {
+  return (
+    <div className="wip-control">
+      <span className="wip-label">WIP:</span>
+      <input
+        type="number"
+        min="1"
+        max="10"
+        value={value}
+        onChange={(e) => onChange(parseInt(e.target.value) || 1)}
+        className="wip-input"
+      />
+      <span className={`wip-count ${isOver ? 'wip-count-over' : ''}`}>
+        ({tasksCount} / {value})
+      </span>
+    </div>
+  );
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\utils\constants.js =====
+export const WIP_LIMIT_DEFAULT = 2;
+
+export const QUIZ_QUESTIONS = [
+  {
+    text: 'Р§С‚Рѕ С‚Р°РєРѕРµ WIP-Р»РёРјРёС‚?',
+    options: ['РњР°РєСЃРёРјСѓРј Р·Р°РґР°С‡ РІ СЂР°Р±РѕС‚Рµ', 'Р’СЂРµРјСЏ СЃРїСЂРёРЅС‚Р°', 'РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ'],
+    correct: 0
+  },
+  {
+    text: 'РљР°Рє РєРѕРЅС‚РµРєСЃС‚РЅС‹Рµ РїРѕРґСЃРєР°Р·РєРё РїРѕРјРѕРіР°СЋС‚ Р±РѕСЂРѕС‚СЊСЃСЏ СЃ В«Agile-С‚РµР°С‚СЂРѕРјВ»?',
+    options: ['РЈРІРµР»РёС‡РёРІР°СЋС‚ С‡РёСЃР»Рѕ РІСЃС‚СЂРµС‡', 'РћР±СЉСЏСЃРЅСЏСЋС‚ РїРѕСЃР»РµРґСЃС‚РІРёСЏ РґРµР№СЃС‚РІРёР№', 'РћС‚РєР»СЋС‡Р°СЋС‚ СЃС‚РµРЅРґР°РїС‹'],
+    correct: 1
+  },
+  {
+    text: 'Р§С‚Рѕ РёР· РїРµСЂРµС‡РёСЃР»РµРЅРЅРѕРіРѕ СЏРІР»СЏРµС‚СЃСЏ РїСЂРёР·РЅР°РєРѕРј В«Agile-С‚РµР°С‚СЂР°В»?',
+    options: ['РћР±СЃСѓР¶РґРµРЅРёРµ СЂРµР°Р»СЊРЅС‹С… РїСЂРѕР±Р»РµРј', 'Р¤РѕСЂРјР°Р»СЊРЅС‹Рµ СЂРµС‚СЂРѕСЃРїРµРєС‚РёРІС‹ Р±РµР· РёР·РјРµРЅРµРЅРёР№', 'Р“РёР±РєРѕРµ РїР»Р°РЅРёСЂРѕРІР°РЅРёРµ'],
+    correct: 1
+  },
+  {
+    text: 'РџРѕС‡РµРјСѓ РіРёР±СЂРёРґРЅС‹Р№ РїРѕРґС…РѕРґ Scrumban СЌС„С„РµРєС‚РёРІРЅРµРµ?',
+    options: ['РЈР±РёСЂР°РµС‚ РІСЃРµ РІСЃС‚СЂРµС‡Рё', 'РЎРѕС‡РµС‚Р°РµС‚ СЃРїСЂРёРЅС‚С‹ СЃ WIP', 'РЈРІРµР»РёС‡РёРІР°РµС‚ РґРѕРєСѓРјРµРЅС‚Р°С†РёСЋ'],
+    correct: 1
+  }
+];
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\utils\localStorage.js =====
+const USERS_KEY = 'agilemind_users';
+const CURRENT_USER_KEY = 'agilemind_current_user';
+
+// РџРѕР»СѓС‡РёС‚СЊ РІСЃРµС… РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№
+export const loadAllUsers = () => {
+  const data = localStorage.getItem(USERS_KEY);
+  return data ? JSON.parse(data) : [];
+};
+
+// РЎРѕС…СЂР°РЅРёС‚СЊ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+export const saveUser = (user) => {
+  const users = loadAllUsers();
+  const existingIndex = users.findIndex(u => u.name === user.name);
+  if (existingIndex !== -1) {
+    users[existingIndex] = user;
+  } else {
+    users.push(user);
+  }
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+};
+
+// РџСЂРѕРІРµСЂРёС‚СЊ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+export const verifyUser = (name, password) => {
+  const users = loadAllUsers();
+  const user = users.find(u => u.name === name);
+  if (!user) return false;
+  return user.password === password;
+};
+
+// РџСЂРѕРІРµСЂРёС‚СЊ СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёРµ
+export const userExists = (name) => {
+  const users = loadAllUsers();
+  return users.some(u => u.name === name);
+};
+
+// РўРµРєСѓС‰РёР№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ
+export const loadCurrentUser = () => {
+  const data = localStorage.getItem(CURRENT_USER_KEY);
+  return data ? JSON.parse(data) : null;
+};
+
+export const login = (user) => {
+  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify({ name: user.name }));
+};
+
+export const logout = () => {
+  localStorage.removeItem(CURRENT_USER_KEY);
+};
+
+// РџСЂРѕРµРєС‚С‹ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+export const saveUserProjects = (userName, projects) => {
+  localStorage.setItem(`agilemind_projects_${userName}`, JSON.stringify(projects));
+};
+
+export const loadUserProjects = (userName) => {
+  const data = localStorage.getItem(`agilemind_projects_${userName}`);
+  return data ? JSON.parse(data) : [];
+
+  
+
+
+};
+
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\App.css =====
+/* Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background: #f3f4f6;
+}
+
+/* РЈР±РёСЂР°РµРј РІСЃРµ РєРѕРЅС‚РµР№РЅРµСЂС‹ РЅР°С…СѓР№ */
+.container, .board-wrapper, .dashboard, .kanban-container {
+  max-width: none;
+  margin: 0;
+  padding: 24px;
+  width: 100%;
+}
+
+/* РџСЂРёРІРµС‚СЃС‚РІРµРЅРЅС‹Р№ Р±Р°РЅРЅРµСЂ */
+.welcome-banner {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Р¤СѓС‚РµСЂ */
+.app-footer {
+  text-align: center;
+  padding: 24px;
+  margin-top: 40px;
+  font-size: 12px;
+  color: #9ca3af;
+  background: transparent;
+}
+
+/* РћСЃС‚Р°Р»СЊРЅРѕРµ Р±РµР· РєРѕРЅС‚РµР№РЅРµСЂРѕРІ */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.project-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.project-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.kanban-board {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+}
+
+.kanban-column {
+  flex: 1;
+  min-width: 280px;
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+}
+
+.app-footer {
+  margin-top: auto;
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-footer {
+  margin-top: auto;
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* РљРѕРЅС‚РµР№РЅРµСЂС‹ */
+.app-container {
+  min-height: 100vh;
+  background: #f3f4f6;
+  padding: 0px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Р’С…РѕРґ */
+.login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  width: 380px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.login-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #1f2937;
+}
+
+.login-subtitle {
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+.login-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.login-button {
+  width: 100%;
+  padding: 12px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.login-button:hover {
+  background: #4338ca;
+}
+
+.login-note {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 20px;
+}
+
+/* Р”Р°С€Р±РѕСЂРґ */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.dashboard-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.dashboard-subtitle {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.badge-counter {
+  background: white;
+  border-radius: 999px;
+  padding: 8px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  font-size: 14px;
+}
+
+.empty-state {
+  background: white;
+  border-radius: 24px;
+  padding: 64px;
+  text-align: center;
+}
+
+.empty-emoji {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-text {
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+.project-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.project-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: box-shadow 0.2s;
+}
+
+.project-card:hover {
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.project-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.project-meta {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+
+.project-stats {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+.project-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-open {
+  flex: 1;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-open:hover {
+  background: #4338ca;
+}
+
+.btn-delete {
+  background: #f3f4f6;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-delete:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.project-badge {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 8px;
+  color: #d97706;
+  font-size: 13px;
+}
+
+.add-project-btn {
+  background: white;
+  border: 2px dashed #d1d5db;
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  font-size: 48px;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-project-btn:hover {
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+/* РњРѕРґР°Р»РєРё */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  width: 380px;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+}
+
+.modal-select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-primary {
+  flex: 1;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  flex: 1;
+  background: #e5e7eb;
+  border: none;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+/* Kanban */
+.board-container {
+  min-height: 100vh;
+  background: #f3f4f6;
+  padding: 24px;
+}
+
+.board-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.back-link {
+  background: none;
+  border: none;
+  color: #4f46e5;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.board-title {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.btn-add-task {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.btn-add-task:hover {
+  background: #059669;
+}
+
+.btn-quiz {
+  background: #f59e0b;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.btn-quiz:hover {
+  background: #d97706;
+}
+
+.kanban-board {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+}
+
+.kanban-column {
+  flex: 1;
+  min-width: 280px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.column-header {
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 16px 16px 0 0;
+}
+
+.column-header-blue {
+  background: #f9fafb;
+}
+
+.column-header-yellow {
+  background: #fefce8;
+}
+
+.column-header-green {
+  background: #ecfdf5;
+}
+
+.column-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.column-title {
+  font-weight: bold;
+}
+
+.column-count {
+  background: #e5e7eb;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.wip-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wip-label {
+  font-size: 12px;
+}
+
+.wip-input {
+  width: 60px;
+  padding: 4px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.wip-count {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.wip-count-over {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.column-content {
+  padding: 12px;
+  min-height: 400px;
+}
+
+/* Task Card */
+.task-card {
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  cursor: grab;
+  border-left: 4px solid #4f46e5;
+  transition: box-shadow 0.2s;
+}
+
+.task-card:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.task-card:active {
+  cursor: grabbing;
+}
+
+.task-card-yellow {
+  background: #fef3c7;
+  border-left-color: #f59e0b;
+}
+
+.task-card-green {
+  background: #ecfdf5;
+  border-left-color: #10b981;
+  opacity: 0.7;
+}
+
+.task-card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.task-title {
+  flex: 1;
+  cursor: pointer;
+}
+
+.task-delete {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.task-delete:hover {
+  color: #ef4444;
+}
+
+.task-done {
+  text-decoration: line-through;
+}
+
+/* Sprint Block */
+.sprint-empty {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.sprint-empty-text {
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+
+.sprint-form {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.sprint-form-title {
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.sprint-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+.sprint-select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.sprint-active {
+  background: linear-gradient(135deg, #eef2ff, #fae8ff);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid #c7d2fe;
+}
+
+.sprint-active-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.sprint-name {
+  font-weight: bold;
+  color: #4338ca;
+}
+
+.sprint-timer {
+  font-family: monospace;
+  font-weight: bold;
+  color: #4338ca;
+}
+
+.btn-complete-sprint {
+  background: #7c3aed;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Learning Panel */
+.learning-panel {
+  margin-top: 24px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.learning-text {
+  color: #1e40af;
+  font-size: 14px;
+}
+
+.quiz-badge {
+  margin-top: 12px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.quiz-badge-text {
+  font-size: 14px;
+  color: #92400e;
+}
+
+.wip-warning {
+  outline: 2px solid #ef4444;
+}
+/* ========== РџР РћР¤РР›Р¬ ========== */
+.profile-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.profile-stat-card {
+  text-align: center;
+  background: #f3f4f6;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.profile-stat-number {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.profile-stat-label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.profile-progress-section {
+  margin-bottom: 24px;
+}
+
+.profile-progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.profile-progress-label {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.profile-progress-percent {
+  font-size: 14px;
+  color: #4f46e5;
+}
+
+.profile-progress-bar {
+  background: #e5e7eb;
+  border-radius: 10px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.profile-progress-fill {
+  background: #4f46e5;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.profile-achievements {
+  margin-bottom: 16px;
+}
+
+.profile-achievements-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.profile-achievement-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.profile-achievement-unlocked {
+  background: #ecfdf5;
+  opacity: 1;
+}
+
+.profile-achievement-locked {
+  background: #f3f4f6;
+  opacity: 0.6;
+}
+
+.profile-achievement-icon {
+  font-size: 28px;
+}
+
+.profile-achievement-info {
+  flex: 1;
+}
+
+.profile-achievement-name {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.profile-achievement-desc {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.profile-achievement-check {
+  font-size: 20px;
+  color: #10b981;
+}
+
+.profile-close-btn {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile-user-info {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.profile-avatar {
+  font-size: 48px;
+}
+
+.profile-user-name {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.profile-user-date {
+  color: #6b7280;
+  font-size: 14px;
+}
+.btn-profile {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+.btn-profile:hover {
+  background: #4338ca;
+}
+/* ========== РљРђРЎРўРћРњРќР«Р™ РЎРљР РћР›Р›Р‘РђР  ========== */
+
+/* Р”Р»СЏ РІСЃРµР№ СЃС‚СЂР°РЅРёС†С‹ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Р”Р»СЏ РјРѕРґР°Р»СЊРЅС‹С… РѕРєРѕРЅ */
+.modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: #e5e7eb;
+  border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+.modal-content {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.modal-content::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+/* ========== РћР‘РЈР§РђР›РљРђ ========== */
+.learning-modal {
+  max-width: 700px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.learning-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.learning-close-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.learning-close-btn:hover {
+  background: #dc2626;
+}
+
+.learning-progress {
+  margin-bottom: 24px;
+}
+
+.learning-progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.progress-bar {
+  background: #e5e7eb;
+  border-radius: 10px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: #4f46e5;
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+.learning-module {
+  margin-bottom: 24px;
+  padding: 16px;
+  border-radius: 16px;
+  transition: all 0.2s ease;
+}
+
+.module-default {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
+.module-completed {
+  background: #ecfdf5;
+  border: 1px solid #10b981;
+}
+
+.module-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.module-header h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.module-btn {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.btn-mark {
+  background: #4f46e5;
+  color: white;
+}
+
+.btn-mark:hover {
+  background: #4338ca;
+}
+
+.btn-completed {
+  background: #10b981;
+  color: white;
+}
+
+.module-content {
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.video-container {
+  background: #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.video-frame {
+  width: 100%;
+  height: 200px;
+  border: none;
+}
+
+.certificate-box {
+  text-align: center;
+  padding: 16px;
+  background: #fef3c7;
+  border-radius: 16px;
+  margin-top: 16px;
+}
+
+.certificate-box div {
+  font-size: 32px;
+}
+
+.certificate-box h3 {
+  font-weight: bold;
+  color: #92400e;
+  margin: 8px 0;
+}
+
+.certificate-box p {
+  font-size: 14px;
+  color: #92400e;
+}
+
+.learning-close-bottom {
+  width: 100%;
+  margin-top: 20px;
+}
+.video-container {
+  margin-top: 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+
+.video-frame {
+  width: 100%;
+  height: 200px;
+  border: none;
+}
+
+.video-note {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #6b7280;
+  text-align: center;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+}
+.video-placeholder {
+  background: #f3f4f6;
+  padding: 30px 20px;
+  text-align: center;
+  border-radius: 12px;
+}
+
+.video-placeholder-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.resource-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0 0;
+}
+
+.resource-list li {
+  margin: 6px 0;
+}
+
+.resource-list a {
+  color: #4f46e5;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.resource-list a:hover {
+  text-decoration: underline;
+}
+/* РђРЅРёРјР°С†РёСЏ Р·Р°РіСЂСѓР·РєРё */
+.video-loading {
+  background: #1f2937;
+  padding: 60px 20px;
+  text-align: center;
+  border-radius: 12px;
+  color: white;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #374151;
+  border-top: 4px solid #4f46e5;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.video-error-funny {
+  background: linear-gradient(135deg, #1e1b4b, #2e1065);
+  padding: 40px 20px;
+  text-align: center;
+  border-radius: 12px;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.video-error-funny-icon {
+  font-size: 64px;
+  animation: shake 0.5s ease infinite alternate;
+}
+
+@keyframes shake {
+  from { transform: translateX(0); }
+  to { transform: translateX(5px); }
+}
+
+.video-error-funny-text {
+  color: white;
+}
+
+.funny-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.funny-subtitle {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 12px;
+}
+
+.funny-loader {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #6366f1;
+  border-top: 3px solid #a78bfa;
+  border-radius: 50%;
+  margin: 10px auto;
+  animation: spin 0.8s linear infinite;
+}
+
+.funny-hint {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.video-container {
+  margin-top: 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #1f2937;
+}
+
+.video-frame {
+  width: 100%;
+  height: 220px;
+  border: none;
+}
+
+.video-note {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #6b7280;
+  text-align: center;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+}
+
+.learning-modal {
+  max-width: 700px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.learning-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.learning-close-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.learning-progress {
+  margin-bottom: 24px;
+}
+
+.learning-progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.progress-bar {
+  background: #e5e7eb;
+  border-radius: 10px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: #4f46e5;
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+.learning-module {
+  margin-bottom: 24px;
+  padding: 16px;
+  border-radius: 16px;
+}
+
+.module-default {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
+.module-completed {
+  background: #ecfdf5;
+  border: 1px solid #10b981;
+}
+
+.module-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.module-header h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.module-btn {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.btn-mark {
+  background: #4f46e5;
+  color: white;
+}
+
+.btn-completed {
+  background: #10b981;
+  color: white;
+}
+
+.module-content {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.certificate-box {
+  text-align: center;
+  padding: 16px;
+  background: #fef3c7;
+  border-radius: 16px;
+  margin-top: 16px;
+}
+
+.certificate-box div {
+  font-size: 32px;
+}
+
+.certificate-box h3 {
+  font-weight: bold;
+  color: #92400e;
+  margin: 8px 0;
+}
+
+.certificate-box p {
+  font-size: 14px;
+  color: #92400e;
+}
+
+.learning-close-bottom {
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* РўР°Р±С‹ РґР»СЏ РІС…РѕРґР°/СЂРµРіРёСЃС‚СЂР°С†РёРё */
+.login-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  background: #f3f4f6;
+  padding: 4px;
+  border-radius: 12px;
+}
+
+.login-tab {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 0.2s ease;
+}
+
+.login-tab-active {
+  background: white;
+  color: #4f46e5;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.login-tab:hover:not(.login-tab-active) {
+  background: #e5e7eb;
+}
+
+.login-error {
+  color: #ef4444;
+  font-size: 13px;
+  margin-bottom: 12px;
+  text-align: center;
+  background: #fef2f2;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.password-eye {
+  position: absolute;
+  right: 12px;
+  top: 40%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #6b7280;
+}
+/* РџРѕСЃС‚РѕСЏРЅРЅР°СЏ СЃРјРµС€РЅР°СЏ Р·Р°РіР»СѓС€РєР° РІРјРµСЃС‚Рѕ РІРёРґРµРѕ */
+.video-funny-permanent {
+  background: linear-gradient(135deg, #1e1b4b, #2e1065);
+  padding: 40px 20px;
+  text-align: center;
+  border-radius: 12px;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.video-funny-permanent-icon {
+  font-size: 64px;
+  animation: shake 0.5s ease infinite alternate;
+}
+
+@keyframes shake {
+  from { transform: translateX(0); }
+  to { transform: translateX(5px); }
+}
+
+.video-funny-permanent-text {
+  color: white;
+}
+
+.funny-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.funny-subtitle {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 12px;
+}
+
+.funny-loader {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #6366f1;
+  border-top: 3px solid #a78bfa;
+  border-radius: 50%;
+  margin: 10px auto;
+  animation: spin 0.8s linear infinite;
+}
+
+.funny-hint {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.video-note {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #6b7280;
+  text-align: center;
+  background: #f9fafb;
+  border-radius: 0 0 12px 12px;
+  margin-top: 0;
+}
+/* РђРЅРёРјР°С†РёСЏ РґР»СЏ СЃРµСЂС‚РёС„РёРєР°С‚Р° */
+.certificate-animation {
+  animation: bounceIn 4s ease-out;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.certificate-icon {
+  font-size: 48px;
+  animation: shake 2s ease infinite alternate;
+}
+
+
+/* ========== Р“Р›РћР‘РђР›Р¬РќР«Р• РђРќРРњРђР¦РР Р”Р›РЇ РџР›РђР’РќРћРЎРўР ========== */
+
+/* РџР»Р°РІРЅРѕРµ РїРѕСЏРІР»РµРЅРёРµ РІСЃРµС… СЌР»РµРјРµРЅС‚РѕРІ */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+/* РљР°СЂС‚РѕС‡РєРё РїСЂРѕРµРєС‚РѕРІ */
+.project-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* РљРЅРѕРїРєРё */
+button {
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.02);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* РњРѕРґР°Р»СЊРЅС‹Рµ РѕРєРЅР° */
+.modal-overlay {
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* РљР°СЂС‚РѕС‡РєРё Р·Р°РґР°С‡ */
+.task-card {
+  transition: all 0.15s ease;
+}
+
+.task-card:hover {
+  transform: translateX(3px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Drag-and-drop Р°РЅРёРјР°С†РёСЏ */
+.task-card.dragging {
+  opacity: 0.4;
+  transform: scale(0.95);
+  cursor: grabbing;
+}
+
+/* Kanban РєРѕР»РѕРЅРєРё РїСЂРё drop */
+.kanban-column {
+  transition: box-shadow 0.2s ease;
+}
+
+.kanban-column:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* WIP РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ */
+.wip-warning {
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2); }
+}
+
+/* РџСЂРѕРіСЂРµСЃСЃ-Р±Р°СЂ */
+.progress-fill {
+  transition: width 0.4s ease;
+}
+
+/* РЎРїСЂРёРЅС‚ С‚Р°Р№РјРµСЂ */
+.sprint-active {
+  transition: all 0.2s ease;
+}
+
+.sprint-active:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Р—РЅР°С‡РєРё РґРѕСЃС‚РёР¶РµРЅРёР№ */
+.profile-achievement-item {
+  transition: all 0.2s ease;
+}
+
+.profile-achievement-item:hover {
+  transform: translateX(5px);
+}
+
+/* РљРЅРѕРїРєР° Р·Р°РєСЂС‹С‚РёСЏ РјРѕРґР°Р»РєРё */
+.learning-close-btn {
+  transition: all 0.15s ease;
+}
+
+.learning-close-btn:hover {
+  transform: scale(1.05);
+  background: #dc2626;
+}
+
+/* РљРѕРЅС„РµС‚С‚Рё РїР»Р°РІРЅРѕСЃС‚СЊ */
+canvas {
+  pointer-events: none !important;
+}
+/* РЎС‚СЂР°РЅРёС†Р° РєРІРёР·РѕРІ */
+.quiz-page {
+  min-height: 100vh;
+  background: #f3f4f6;
+  padding: 24px;
+}
+
+.quiz-container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.quiz-header-main {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.quiz-header-main h1 {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.quizzes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.quiz-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.quiz-card:hover {
+  transform: translateY(-3px);
+}
+
+.quiz-card-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.quiz-card h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.quiz-card p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+.quiz-completed {
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  border: 1px solid #10b981;
+}
+
+.quiz-desc {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+.quiz-question-block {
+  margin-bottom: 5px;
+  padding: 10px;
+  background: #f9fafb;
+  border-radius: 16px;
+}
+
+.quiz-question-text {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.quiz-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-left: 12px;
+}
+
+.quiz-option-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.quiz-submit-btn {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.all-quizzes-completed {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 20px;
+  font-weight: bold;
+  color: #92400e;
+  animation: bounceIn 0.5s ease;
+}
+
+/* Burndown chart */
+.burndown-container {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.burndown-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #1f2937;
+}
+
+.burndown-stats {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.burndown-note {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 12px;
+  text-align: center;
+}
+
+.task-description {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 4px;
+  line-height: 1.3;
+  word-break: break-word;
+}
+.comments-placeholder {
+  background: #f9fafb;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 24px;
+  border: 1px solid #e5e7eb;
+}
+
+.comments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+.comments-badge {
+  background: #e0e7ff;
+  color: #4f46e5;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+}
+
+.comments-list {
+  margin-bottom: 16px;
+}
+
+.comment-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 13px;
+}
+
+.comment-input-placeholder {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.comment-input-placeholder input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f3f4f6;
+  color: #9ca3af;
+}
+
+.comment-input-placeholder button {
+  padding: 8px 16px;
+  background: #e5e7eb;
+  border: none;
+  border-radius: 12px;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.comment-note {
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: center;
+  padding-top: 8px;
+}
+.welcome-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  color: white;
+}
+
+.welcome-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0 0 4px 0;
+}
+
+.welcome-time {
+  font-size: 14px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.welcome-stats {
+  background: rgba(255,255,255,0.2);
+  padding: 8px 16px;
+  border-radius: 40px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.app-footer {
+  text-align: center;
+  padding: 24px;
+  margin-top: 40px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 12px;
+  color: #9ca3af;
+  background: white;
+}
+
+.dark-mode .app-footer {
+  background: #16213e;
+  border-top-color: #0f3460;
+  color: #6b7280;
+}
+
+.app-footer a {
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.app-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ===== РљРђРЎРўРћРњРќР«Р• РЎРўРР›Р Р”Р›РЇ РљР РђРЎРћРўР« ===== */
+
+/* РљР°СЂС‚РѕС‡РєРё Р·Р°РґР°С‡ */
+.task-card {
+  transition: all 0.2s ease;
+  border-left-width: 4px;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* РљРЅРѕРїРєРё */
+.btn-add-task, .btn-quiz, .btn-primary, .btn-secondary {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-add-task:hover, .btn-quiz:hover, .btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-add-task:active, .btn-quiz:active, .btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* РљРѕР»РѕРЅРєРё Kanban */
+.kanban-column {
+  transition: box-shadow 0.2s ease;
+  background: white;
+}
+
+.kanban-column:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Р—Р°РіРѕР»РѕРІРєРё РєРѕР»РѕРЅРѕРє */
+.column-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* WIP-РєРѕРЅС‚СЂРѕР» */
+.wip-control {
+  background: #f3f4f6;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.wip-input {
+  width: 55px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* РЎС‡С‘С‚С‡РёРє Р·Р°РґР°С‡ */
+.column-count {
+  font-weight: 600;
+  background: #e5e7eb;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* РљР°СЂС‚РѕС‡РєРё РїСЂРѕРµРєС‚РѕРІ */
+.project-card {
+  transition: all 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* РљРЅРѕРїРєР° СЃРѕР·РґР°РЅРёСЏ РїСЂРѕРµРєС‚Р° */
+.add-project-btn {
+  transition: all 0.2s ease;
+}
+
+.add-project-btn:hover {
+  background: #e5e7eb;
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+/* РњРѕРґР°Р»СЊРЅС‹Рµ РѕРєРЅР° */
+.modal-content {
+  animation: fadeInScale 0.2s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== РљРђРЎРўРћРњРќР«Р• РЎРўРР›Р Р”Р›РЇ РљР РђРЎРћРўР« ===== */
+
+/* РљР°СЂС‚РѕС‡РєРё Р·Р°РґР°С‡ */
+.task-card {
+  transition: all 0.2s ease;
+  border-left-width: 4px;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* РљРЅРѕРїРєРё */
+.btn-add-task, .btn-quiz, .btn-primary, .btn-secondary {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-add-task:hover, .btn-quiz:hover, .btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-add-task:active, .btn-quiz:active, .btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* РљРѕР»РѕРЅРєРё Kanban */
+.kanban-column {
+  transition: box-shadow 0.2s ease;
+  background: white;
+}
+
+.kanban-column:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Р—Р°РіРѕР»РѕРІРєРё РєРѕР»РѕРЅРѕРє */
+.column-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* WIP-РєРѕРЅС‚СЂРѕР» */
+.wip-control {
+  background: #f3f4f6;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.wip-input {
+  width: 55px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* РЎС‡С‘С‚С‡РёРє Р·Р°РґР°С‡ */
+.column-count {
+  font-weight: 600;
+  background: #e5e7eb;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* РљР°СЂС‚РѕС‡РєРё РїСЂРѕРµРєС‚РѕРІ */
+.project-card {
+  transition: all 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* РљРЅРѕРїРєР° СЃРѕР·РґР°РЅРёСЏ РїСЂРѕРµРєС‚Р° */
+.add-project-btn {
+  transition: all 0.2s ease;
+}
+
+.add-project-btn:hover {
+  background: #e5e7eb;
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+/* РњРѕРґР°Р»СЊРЅС‹Рµ РѕРєРЅР° */
+.modal-content {
+  animation: fadeInScale 0.2s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== РљРђРЎРўРћРњРќР«Р• РЎРўРР›Р Р”Р›РЇ РљР РђРЎРћРўР« ===== */
+
+/* РљР°СЂС‚РѕС‡РєРё Р·Р°РґР°С‡ */
+.task-card {
+  transition: all 0.2s ease;
+  border-left-width: 4px;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* РљРЅРѕРїРєРё */
+.btn-add-task, .btn-quiz, .btn-primary, .btn-secondary {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-add-task:hover, .btn-quiz:hover, .btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-add-task:active, .btn-quiz:active, .btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* РљРѕР»РѕРЅРєРё Kanban */
+.kanban-column {
+  transition: box-shadow 0.2s ease;
+  background: white;
+}
+
+.kanban-column:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Р—Р°РіРѕР»РѕРІРєРё РєРѕР»РѕРЅРѕРє */
+.column-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* WIP-РєРѕРЅС‚СЂРѕР» */
+.wip-control {
+  background: #f3f4f6;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.wip-input {
+  width: 55px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* РЎС‡С‘С‚С‡РёРє Р·Р°РґР°С‡ */
+.column-count {
+  font-weight: 600;
+  background: #e5e7eb;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* РљР°СЂС‚РѕС‡РєРё РїСЂРѕРµРєС‚РѕРІ */
+.project-card {
+  transition: all 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* РљРЅРѕРїРєР° СЃРѕР·РґР°РЅРёСЏ РїСЂРѕРµРєС‚Р° */
+.add-project-btn {
+  transition: all 0.2s ease;
+}
+
+.add-project-btn:hover {
+  background: #e5e7eb;
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+/* РњРѕРґР°Р»СЊРЅС‹Рµ РѕРєРЅР° */
+.modal-content {
+  animation: fadeInScale 0.2s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== РљРђРЎРўРћРњРќР«Р• РЎРўРР›Р Р”Р›РЇ РљР РђРЎРћРўР« ===== */
+
+/* РљР°СЂС‚РѕС‡РєРё Р·Р°РґР°С‡ */
+.task-card {
+  transition: all 0.2s ease;
+  border-left-width: 4px;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* РљРЅРѕРїРєРё */
+.btn-add-task, .btn-quiz, .btn-primary, .btn-secondary {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-add-task:hover, .btn-quiz:hover, .btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-add-task:active, .btn-quiz:active, .btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* РљРѕР»РѕРЅРєРё Kanban */
+.kanban-column {
+  transition: box-shadow 0.2s ease;
+  background: white;
+}
+
+.kanban-column:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Р—Р°РіРѕР»РѕРІРєРё РєРѕР»РѕРЅРѕРє */
+.column-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* WIP-РєРѕРЅС‚СЂРѕР» */
+.wip-control {
+  background: #f3f4f6;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.wip-input {
+  width: 55px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* РЎС‡С‘С‚С‡РёРє Р·Р°РґР°С‡ */
+.column-count {
+  font-weight: 600;
+  background: #e5e7eb;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* РљР°СЂС‚РѕС‡РєРё РїСЂРѕРµРєС‚РѕРІ */
+.project-card {
+  transition: all 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* РљРЅРѕРїРєР° СЃРѕР·РґР°РЅРёСЏ РїСЂРѕРµРєС‚Р° */
+.add-project-btn {
+  transition: all 0.2s ease;
+}
+
+.add-project-btn:hover {
+  background: #e5e7eb;
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+/* РњРѕРґР°Р»СЊРЅС‹Рµ РѕРєРЅР° */
+.modal-content {
+  animation: fadeInScale 0.2s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* РџР»Р°РІРЅРѕРµ СѓРІРµР»РёС‡РµРЅРёРµ РєРЅРѕРїРѕРє РїСЂРё РЅР°РІРµРґРµРЅРёРё */
+.btn-add-task, .btn-quiz, .btn-primary, .btn-secondary {
+  transition: transform 0.1s ease, background 0.2s ease;
+}
+
+.btn-add-task:hover, .btn-quiz:hover, .btn-primary:hover {
+  transform: scale(1.02);
+}
+
+.btn-add-task:active, .btn-quiz:active, .btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* РљР°СЂС‚РѕС‡РєРё Р·Р°РґР°С‡ РїСЂРё РЅР°РІРµРґРµРЅРёРё */
+.task-card {
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* РљРѕР»РѕРЅРєРё РїСЂРё РЅР°РІРµРґРµРЅРёРё */
+.kanban-column {
+  transition: box-shadow 0.2s ease;
+}
+
+.kanban-column:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* РљР°СЂС‚РѕС‡РєРё РїСЂРѕРµРєС‚РѕРІ */
+.project-card {
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* РЎС‚СЂР°РЅРёС†Р° РєРѕРјР°РЅРґС‹ */
+.team-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.team-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.team-subtitle {
+  color: #6b7280;
+  margin-bottom: 32px;
+}
+
+.team-card {
+  display: flex;
+  gap: 20px;
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.team-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.team-card-icon {
+  font-size: 48px;
+}
+
+.team-card-content {
+  flex: 1;
+}
+
+.team-card-content h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.team-card-content p {
+  color: #4b5563;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.team-card-content ul {
+  margin-left: 20px;
+  margin-bottom: 16px;
+}
+
+.team-card-content li {
+  margin-bottom: 8px;
+  color: #4b5563;
+}
+
+.goal-placeholder {
+  background: #f3f4f6;
+  padding: 12px;
+  border-radius: 12px;
+  margin: 12px 0;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.standup-card { border-left: 4px solid #f59e0b; }
+.retro-card { border-left: 4px solid #8b5cf6; }
+.goal-card { border-left: 4px solid #10b981; }
+.reminder-card { border-left: 4px solid #3b82f6; }
+
+/* РљРћРњРђРќР”Рђ */
+.btn-team {
+  background: #8b5cf6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ========== РђР”РђРџРўРђР¦РРЇ Р”Р›РЇ РњРћР‘РР›Р¬РќР«РҐ РЈРЎРўР РћР™РЎРўР’ ========== */
+
+/* РџР»Р°РЅС€РµС‚С‹ Рё РјР°Р»РµРЅСЊРєРёРµ РЅРѕСѓС‚Р±СѓРєРё */
+@media (max-width: 1024px) {
+  .kanban-board {
+    flex-wrap: wrap;
+  }
+  
+  .kanban-column {
+    min-width: 320px;
+    flex: 1 1 45%;
+  }
+  
+  .project-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+/* РўРµР»РµС„РѕРЅС‹ (РґРѕ 768px) */
+@media (max-width: 768px) {
+  /* РћР±С‰РёРµ РѕС‚СЃС‚СѓРїС‹ */
+  .app-container, .board-container {
+    padding: 12px;
+  }
+  
+  /* Р”Р°С€Р±РѕСЂРґ */
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .dashboard-title {
+    font-size: 24px;
+  }
+  
+  .project-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .project-card {
+    padding: 16px;
+  }
+  
+  /* Kanban-РґРѕСЃРєР° */
+  .board-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .board-header div {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .board-header button {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .kanban-board {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .kanban-column {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .column-header-content {
+    flex-wrap: wrap;
+  }
+  
+  /* Р—Р°РіРѕР»РѕРІРєРё */
+  .board-title {
+    font-size: 22px;
+  }
+  
+  /* РњРѕРґР°Р»РєРё */
+  .modal-content {
+    width: 90%;
+    margin: 0 16px;
+    padding: 20px;
+  }
+  
+  .modal-title {
+    font-size: 18px;
+  }
+  
+  /* РљР°СЂС‚РѕС‡РєР° РІС…РѕРґР° */
+  .login-card {
+    width: 90%;
+    padding: 24px;
+    margin: 0 16px;
+  }
+  
+  .login-title {
+    font-size: 24px;
+  }
+  
+  /* РЎРїСЂРёРЅС‚-Р±Р»РѕРє */
+  .sprint-active-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .btn-complete-sprint {
+    width: 100%;
+  }
+  
+  /* РћР±СѓС‡Р°СЋС‰Р°СЏ РїР°РЅРµР»СЊ */
+  .learning-panel {
+    padding: 12px;
+  }
+  
+  .learning-text {
+    font-size: 12px;
+  }
+  
+  /* РЈРїСЂР°РІР»РµРЅРёРµ WIP */
+  .wip-control {
+    flex-wrap: wrap;
+  }
+}
+
+/* РћС‡РµРЅСЊ РјР°Р»РµРЅСЊРєРёРµ С‚РµР»РµС„РѕРЅС‹ (РґРѕ 480px) */
+@media (max-width: 480px) {
+  .task-card {
+    padding: 10px;
+  }
+  
+  .task-title {
+    font-size: 13px;
+  }
+  
+  .column-title {
+    font-size: 14px;
+  }
+  
+  .modal-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .modal-buttons button {
+    width: 100%;
+  }
+  
+  .sprint-form input,
+  .sprint-form select {
+    font-size: 14px;
+  }
+  @media (max-width: 768px) {
+  .ai-fab {
+    width: 48px !important;
+    height: 48px !important;
+    bottom: 16px !important;
+    right: 16px !important;
+  }
+
+}
+}
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\App.jsx =====
+import React, { useState, useEffect } from 'react';
+import './App.css';
+import LoginScreen from './components/LoginScreen';
+import Dashboard from './components/Dashboard';
+import QuizzesPage from './components/QuizzesPage';
+import Profile from './components/Profile';
+import { loadCurrentUser, login, logout, loadUserProjects, saveUserProjects } from './utils/localStorage';
+import KanbanBoard from './components/KanbanBoard';
+
+import AiAssistant from './components/AiAssistant';
+
+function App() {
+  const [user, setUser] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [currentScreen, setCurrentScreen] = useState(() => {
+    return localStorage.getItem('currentScreen') || 'dashboard';
+  });
+  const [currentProjectId, setCurrentProjectId] = useState(() => {
+    const saved = localStorage.getItem('currentProjectId');
+    return saved ? parseInt(saved) : null;
+  });
+
+  useEffect(() => {
+    const savedUser = loadCurrentUser();
+    if (savedUser) {
+      setUser(savedUser);
+      const savedProjects = loadUserProjects(savedUser.name);
+      setProjects(savedProjects);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user && currentScreen !== 'login') {
+      localStorage.setItem('currentScreen', currentScreen);
+      if (currentProjectId) {
+        localStorage.setItem('currentProjectId', currentProjectId);
+      } else {
+        localStorage.removeItem('currentProjectId');
+      }
+    }
+  }, [currentScreen, currentProjectId, user]);
+
+  const handleLogin = (name) => {
+    const newUser = { name };
+    setUser(newUser);
+    login(newUser);
+    const savedProjects = loadUserProjects(name);
+    setProjects(savedProjects);
+    setCurrentScreen('dashboard');
+  };
+
+  const handleLogout = () => {
+    logout();
+    setUser(null);
+    setProjects([]);
+    localStorage.removeItem('currentScreen');
+  };
+
+  const updateProjects = (newProjects) => {
+    setProjects(newProjects);
+    if (user) {
+      saveUserProjects(user.name, newProjects);
+    }
+  };
+
+  if (!user) {
+    return <LoginScreen onLogin={handleLogin} />;
+  }
+
+  const openProject = projects.find(p => p.id === currentProjectId);
+
+  if (currentScreen === 'project' && openProject) {
+    return (
+      <KanbanBoard
+        project={openProject}
+        onBack={() => {
+          setCurrentScreen('dashboard');
+          setCurrentProjectId(null);
+        }}
+        onUpdate={(updated) => {
+          const newProjects = projects.map(p => p.id === updated.id ? updated : p);
+          updateProjects(newProjects);
+        }}
+      />
+    );
+  }
+
+  if (currentScreen === 'quizzes') {
+    return <QuizzesPage onBack={() => setCurrentScreen('dashboard')} />;
+  }
+
+  if (currentScreen === 'profile') {
+    return (
+      <Profile
+        user={user}
+        projects={projects}
+        onClose={() => setCurrentScreen('dashboard')}
+      />
+    );
+  }
+
+  return (
+    <div className="app-wrapper">
+      <div className="main-content">
+        <Dashboard
+          user={user}
+          projects={projects}
+          onUpdateProjects={updateProjects}
+          onOpenQuizzes={() => setCurrentScreen('quizzes')}
+          onOpenProfile={() => setCurrentScreen('profile')}
+          onOpenProject={(project) => {
+            setCurrentProjectId(project.id);
+            setCurrentScreen('project');
+          }}
+          onLogout={handleLogout}
+        />
+      </div>
+      <footer className="app-footer">
+        <p>
+        AgileMind вЂ” РґРёРїР»РѕРјРЅС‹Р№ РїСЂРѕРµРєС‚ РїРѕ СѓРїСЂР°РІР»РµРЅРёСЋ РїСЂРѕРµРєС‚Р°РјРё СЃ РёРЅС‚РµСЂР°РєС‚РёРІРЅС‹Рј РѕР±СѓС‡РµРЅРёРµРј<br />
+        В© {new Date().getFullYear()} РљР°СЂРёРјРѕРІ РРЅСЃР°С„, РљРќРРўРЈ-РљРђР
+      </p>
+      <p style={{ marginTop: '8px' }}>
+        рџЋ“ WIP-Р»РёРјРёС‚С‹ В· Scrumban В· РљРІРёР·С‹ В· РћР±СѓС‡РµРЅРёРµ Agile В· Р”РѕСЃС‚РёР¶РµРЅРёСЏ
+      </p>
+      </footer>
+      {/* AI-Р°СЃСЃРёСЃС‚РµРЅС‚ */}
+      <AiAssistant />
+    </div>
+  );
+}
+
+export default App;
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\index.css =====
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+footer {
+  margin: 0;
+  padding: 10px;
+  border: none;
+}
+
+
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\index.js =====
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+===== C:\Users\carim\Desktop\agilemind-appPro\src\main.jsx =====
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
