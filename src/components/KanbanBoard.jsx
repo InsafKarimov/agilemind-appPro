@@ -23,32 +23,31 @@ export default function KanbanBoard({ project, onBack, onUpdate }) {
     return tasksList.filter(t => t.priority === priorityFilter);
   };
 
-  
   const todo = tasks.filter(t => t.status === 'todo');
   const inprogress = tasks.filter(t => t.status === 'inprogress');
   const done = tasks.filter(t => t.status === 'done');
   const isWipOver = inprogress.length >= wipLimit;
 
   const addTask = (taskData) => {
-  const newTask = {
-    id: Date.now(),
-    title: taskData.title,
-    description: taskData.description || '',
-    priority: taskData.priority,
-    status: 'todo'
+    const newTask = {
+      id: Date.now(),
+      title: taskData.title,
+      description: taskData.description || '',
+      priority: taskData.priority,
+      status: 'todo'
+    };
+    setTasks([...tasks, newTask]);
   };
-  setTasks([...tasks, newTask]);
-};
 
-const saveTask = (taskData) => {
-  if (!editingTask) return;
-  setTasks(tasks.map(t =>
-    t.id === editingTask.id
-      ? { ...t, title: taskData.title, description: taskData.description || '', priority: taskData.priority }
-      : t
-  ));
-  setEditingTask(null);
-};
+  const saveTask = (taskData) => {
+    if (!editingTask) return;
+    setTasks(tasks.map(t =>
+      t.id === editingTask.id
+        ? { ...t, title: taskData.title, description: taskData.description || '', priority: taskData.priority }
+        : t
+    ));
+    setEditingTask(null);
+  };
 
   const deleteTask = (id) => {
     if (window.confirm('Удалить задачу?')) {
@@ -67,14 +66,10 @@ const saveTask = (taskData) => {
 Вы пытаетесь добавить задачу в колонку «В работе», но там уже ${inprogress.length} из ${wipLimit} задач.
 
 📌 Почему это важно:
-WIP (Work In Progress) — ограничение на количество незавершённых задач. Превышение лимита приводит к:
-• Многозадачности и потере фокуса
-• Росту времени выполнения задач
-• Накоплению «узких мест» в процессе
+WIP (Work In Progress) — ограничение на количество незавершённых задач. Превышение лимита приводит к многозадачности и потере фокуса.
 
 📌 Что делать:
-1. Завершите одну из текущих задач (переместите в «Готово»)
-2. Или верните задачу в «К выполнению»
+Завершите одну из текущих задач (переместите в «Готово») или верните задачу в «К выполнению»
 
 🧠 Это основа Kanban-методологии.`);
       return;
@@ -116,20 +111,18 @@ WIP (Work In Progress) — ограничение на количество не
         <button className="back-link" onClick={onBack}>← К проектам</button>
 
         <div className="board-header">
-          <h1 className="board-title" title={project.name}>
-            {project.name.length > 25 ? project.name.slice(0, 25) + '...' : project.name}
-          </h1>
+          <h1 className="board-title">{project.name}</h1>
           <div>
-            <button className="btn-add-task" onClick={() => { setEditingTask(null); setShowTaskModal(true); }} title="➕ Создать новую задачу. Название, описание, приоритет — всё настраивается.">➕ Задача</button>
-            <button className="btn-quiz" onClick={() => setShowQuiz(true)} title="🏅 Квиз — проверь знания по Agile (нужно 3 из 4 правильных ответов)">🏅 Квиз</button>
+            <button className="btn-add-task" onClick={() => { setEditingTask(null); setShowTaskModal(true); }}>➕ Задача</button>
+            <button className="btn-quiz" onClick={() => setShowQuiz(true)}>🏅 Квиз</button>
           </div>
         </div>
 
         <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
           <button onClick={() => setPriorityFilter('all')} style={{ padding: '6px 12px', borderRadius: '20px', border: 'none', cursor: 'pointer', background: priorityFilter === 'all' ? '#4f46e5' : '#e5e7eb', color: priorityFilter === 'all' ? 'white' : '#374151' }}>Все</button>
-          <button onClick={() => setPriorityFilter('Low')} style={{ padding: '6px 12px', borderRadius: '20px', border: 'none', cursor: 'pointer', background: priorityFilter === 'Low' ? '#10b981' : '#e5e7eb', color: priorityFilter === 'Low' ? 'white' : '#374151' }}>🟢 Низкий приоритет</button>
-          <button onClick={() => setPriorityFilter('Medium')} style={{ padding: '6px 12px', borderRadius: '20px', border: 'none', cursor: 'pointer', background: priorityFilter === 'Medium' ? '#f59e0b' : '#e5e7eb', color: priorityFilter === 'Medium' ? 'white' : '#374151' }}>🟡 Средний приоритет</button>
-          <button onClick={() => setPriorityFilter('High')} style={{ padding: '6px 12px', borderRadius: '20px', border: 'none', cursor: 'pointer', background: priorityFilter === 'High' ? '#ef4444' : '#e5e7eb', color: priorityFilter === 'High' ? 'white' : '#374151' }}>🔴 Высокий приоритет</button>
+          <button onClick={() => setPriorityFilter('Low')} style={{ padding: '6px 12px', borderRadius: '20px', border: 'none', cursor: 'pointer', background: priorityFilter === 'Low' ? '#10b981' : '#e5e7eb', color: priorityFilter === 'Low' ? 'white' : '#374151' }}>🟢 Низкий</button>
+          <button onClick={() => setPriorityFilter('Medium')} style={{ padding: '6px 12px', borderRadius: '20px', border: 'none', cursor: 'pointer', background: priorityFilter === 'Medium' ? '#f59e0b' : '#e5e7eb', color: priorityFilter === 'Medium' ? 'white' : '#374151' }}>🟡 Средний</button>
+          <button onClick={() => setPriorityFilter('High')} style={{ padding: '6px 12px', borderRadius: '20px', border: 'none', cursor: 'pointer', background: priorityFilter === 'High' ? '#ef4444' : '#e5e7eb', color: priorityFilter === 'High' ? 'white' : '#374151' }}>🔴 Высокий</button>
         </div>
 
         <SprintBlock project={project} onCompleteSprint={handleSprintComplete} />
@@ -139,10 +132,11 @@ WIP (Work In Progress) — ограничение на количество не
         )}
 
         <div className="kanban-board">
+          {/* КОЛОНКА TODO */}
           <div className="kanban-column">
             <div className="column-header column-header-blue">
               <div className="column-header-content">
-                <h3 className="column-title" title="📋 Задачи, которые нужно сделать">📋 К выполнению</h3>
+                <h3 className="column-title">📋 К выполнению</h3>
                 <span className="column-count">{filterTasks(todo).length}</span>
               </div>
             </div>
@@ -153,24 +147,25 @@ WIP (Work In Progress) — ограничение на количество не
                     <span className="task-title" onClick={() => openEditModal(t)}>{t.title}</span>
                     <button className="task-delete" onClick={() => deleteTask(t.id)}>✕</button>
                   </div>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '8px', justifyContent: 'flex-end' }}>
+                    <button onClick={() => moveTask(t.id, 'inprogress')} style={{ background: '#4f46e5', color: 'white', border: 'none', padding: '4px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px' }}>Вперёд ▶</button>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
+          {/* КОЛОНКА IN PROGRESS */}
           <div className={`kanban-column ${isWipOver ? 'wip-warning' : ''}`}>
             <div className="column-header column-header-yellow">
               <div className="column-header-content">
-                <h3 className="column-title" title="⚙️ Задачи, над которыми команда работает прямо сейчас. WIP-лимит ограничивает их количество.">⚙️ В работе</h3>
+                <h3 className="column-title">⚙️ В работе</h3>
                 {showWip ? (
-                  <div className="wip-control" title="📚 WIP-лимит — максимальное количество задач в работе. Превышение ведёт к хаосу и замедлению. ✅ Правило: заверши одну — возьми следующую.">
+                  <div className="wip-control">
                     <span className="wip-label">WIP:</span>
                     <input type="number" min="1" max="10" value={wipLimit} onChange={(e) => setWipLimit(parseInt(e.target.value) || 1)} className="wip-input" />
                     <span className={`wip-count ${isWipOver ? 'wip-count-over' : ''}`}> ({filterTasks(inprogress).length}/{wipLimit})</span>
                   </div>
-                  
-                    
-                  
                 ) : (
                   <span className="column-count">{filterTasks(inprogress).length}</span>
                 )}
@@ -183,15 +178,20 @@ WIP (Work In Progress) — ограничение на количество не
                     <span className="task-title" onClick={() => openEditModal(t)}>{t.title}</span>
                     <button className="task-delete" onClick={() => deleteTask(t.id)}>✕</button>
                   </div>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '8px', justifyContent: 'flex-end' }}>
+                    <button onClick={() => moveTask(t.id, 'todo')} style={{ background: '#e5e7eb', border: 'none', padding: '4px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px' }}>◀ Назад</button>
+                    <button onClick={() => moveTask(t.id, 'done')} style={{ background: '#4f46e5', color: 'white', border: 'none', padding: '4px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px' }}>Вперёд ▶</button>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
+          {/* КОЛОНКА DONE */}
           <div className="kanban-column">
             <div className="column-header column-header-green">
               <div className="column-header-content">
-                <h3 className="column-title" title="✅ Завершённые задачи. Их можно вернуть обратно при необходимости.">✅ Готово</h3>
+                <h3 className="column-title">✅ Готово</h3>
                 <span className="column-count">{filterTasks(done).length}</span>
               </div>
             </div>
@@ -202,32 +202,30 @@ WIP (Work In Progress) — ограничение на количество не
                     <span className="task-title task-done" onClick={() => openEditModal(t)}>{t.title}</span>
                     <button className="task-delete" onClick={() => deleteTask(t.id)}>✕</button>
                   </div>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '8px', justifyContent: 'flex-end' }}>
+                    <button onClick={() => moveTask(t.id, 'inprogress')} style={{ background: '#e5e7eb', border: 'none', padding: '4px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px' }}>◀ Назад</button>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         </div>
+
         <div className="comments-placeholder">
-        <div className="comments-header">
-          <span>💬 Комментарии команды</span>
-          <span className="comments-badge">Beta</span>
-        </div>
-        <div className="comments-list">
-          <div className="comment-item">
-            <strong>Инсаф:</strong> WIP-лимит помог закончить спринт без перегруза
+          <div className="comments-header">
+            <span>💬 Комментарии команды</span>
+            <span className="comments-badge">Beta</span>
           </div>
-          <div className="comment-item">
-            <strong>Система:</strong> Функция комментариев появится в следующей версии
+          <div className="comments-list">
+            <div className="comment-item"><strong>Инсаф:</strong> WIP-лимит помог закончить спринт без перегруза</div>
+            <div className="comment-item"><strong>Система:</strong> Функция комментариев появится в следующей версии</div>
           </div>
+          <div className="comment-input-placeholder">
+            <input type="text" placeholder="Напишите комментарий... (будет в v2.0)" disabled />
+            <button disabled>📤</button>
+          </div>
+          <div className="comment-note">⚡ Комментарии в разработке. В релизе будет возможность обсуждать задачи внутри команды.</div>
         </div>
-        <div className="comment-input-placeholder">
-          <input type="text" placeholder="Напишите комментарий... (будет в v2.0)" disabled />
-          <button disabled>📤</button>
-        </div>
-        <div className="comment-note">
-          ⚡ Комментарии в разработке. В релизе будет возможность обсуждать задачи внутри команды.
-        </div>
-      </div>
 
         {showWip && (
           <div className="learning-panel">
