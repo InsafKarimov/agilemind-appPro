@@ -174,18 +174,20 @@ export default function AiAssistant() {
             />
             <button
               onClick={sendMessage}
-              disabled={loading}
+              disabled={loading || !input.trim()}
               style={{
                 background: '#4f46e5',
                 color: 'white',
                 border: 'none',
                 borderRadius: '20px',
-                padding: '8px 20px',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.6 : 1
+                width: '40px',
+                height: '40px',
+                cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
+                opacity: loading || !input.trim() ? 0.5 : 1,
+                fontSize: '18px'
               }}
             >
-              Отправить
+              📤
             </button>
           </div>
         </div>

@@ -12,7 +12,7 @@ export default function TeamPage({ onBack, user }) {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const newSocket = io('http://localhost:5002', {
+    const newSocket = io('https://agilemind-sandbox-backend.onrender.com', {
       auth: { username: user?.name || 'Гость', token }
     });
     
@@ -152,7 +152,8 @@ export default function TeamPage({ onBack, user }) {
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
           />
-          <button onClick={sendMessage}>Отправить</button>
+          <button onClick={sendMessage} className="chat-send-btn">Отправить</button>
+          
         </div>
       </div>
 
